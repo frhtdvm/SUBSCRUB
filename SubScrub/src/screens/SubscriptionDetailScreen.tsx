@@ -49,16 +49,18 @@ export default function SubscriptionDetailScreen() {
     );
   }
 
-  const isCancelled = subscription.status === 'cancelled';
+  // Re-bind after the guard so TypeScript narrows correctly inside closures
+  const sub = subscription;
+  const isCancelled = sub.status === 'cancelled';
 
   async function handleMarkCancelled() {
     if (isCancelled) return;
     setCancelling(true);
     try {
-      await updateSubscriptionStatus(subscription.id, 'cancelled');
-      store.updateSubscription(subscription.id, { status: 'cancelled' });
+      await updateSubscriptionStatus(sub.id, 'cancelled');
+      store.updateSubscription(sub.id, { status: 'cancelled' });
 
-      const saved = savedAmount(subscription);
+      const saved = savedAmount(sub);
       const profile = store.profile;
       if (profile) {
         const newTotal = profile.totalSaved + saved;
@@ -68,7 +70,7 @@ export default function SubscriptionDetailScreen() {
 
       Alert.alert(
         'More money stays in your pocket.',
-        `${subscription.providerName} marked as cancelled.\nYou save ${formatCurrency(saved, subscription.currency)}/month.`
+        `${sub.providerName} marked as cancelled.\nYou save ${formatCurrency(saved, sub.currency)}/month.`
       );
     } finally {
       setCancelling(false);
@@ -80,8 +82,8 @@ export default function SubscriptionDetailScreen() {
       navigation.navigate('Paywall', { feature: 'cancellation links' });
       return;
     }
-    if (subscription.cancellationLink) {
-      Linking.openURL(subscription.cancellationLink).catch(() =>
+    if (sub.cancellationLink) {
+      Linking.openURL(sub.cancellationLink).catch(() =>
         Alert.alert('Error', 'Could not open link')
       );
     }
@@ -92,7 +94,7 @@ export default function SubscriptionDetailScreen() {
       navigation.navigate('Paywall', { feature: 'legal templates' });
       return;
     }
-    navigation.navigate('LegalTemplatePreview', { subscription, jurisdiction });
+    navigation.navigate('LegalTemplatePreview', { subscription: sub, jurisdiction });
   }
 
   function StatusLabel() {
@@ -101,7 +103,7 @@ export default function SubscriptionDetailScreen() {
       potential_leak: { label: 'Potential Thief', color: Colors.warning },
       cancelled: { label: 'Cancelled', color: Colors.cancelled },
     };
-    const c = cfg[subscription.status];
+    const c = cfg[sub.status];
     return (
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
         <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: c.color }} />
@@ -140,7 +142,7 @@ export default function SubscriptionDetailScreen() {
               marginBottom: 6,
             }}
           >
-            {subscription.providerName}
+            {sub.providerName}
           </Text>
           <StatusLabel />
         </View>
@@ -158,7 +160,7 @@ export default function SubscriptionDetailScreen() {
           }}
         >
           <Text style={{ color: Colors.textMuted, fontSize: 11, fontFamily: 'SpaceMono', letterSpacing: 2, marginBottom: 6 }}>
-            {subscription.frequency === 'monthly' ? 'MONTHLY CHARGE' : 'YEARLY CHARGE'}
+            {sub.frequency === 'monthly' ? 'MONTHLY CHARGE' : 'YEARLY CHARGE'}
           </Text>
           <Text
             style={{
@@ -168,22 +170,22 @@ export default function SubscriptionDetailScreen() {
               fontWeight: '700',
             }}
           >
-            {formatCurrency(subscription.amount, subscription.currency)}
+            {formatCurrency(sub.amount, sub.currency)}
           </Text>
-          {subscription.nextBillingDate && !isCancelled && (
+          {sub.nextBillingDate && !isCancelled && (
             <Text style={{ color: Colors.textMuted, fontSize: 11, fontFamily: 'SpaceMono', marginTop: 4 }}>
-              Next: {formatDateRelative(subscription.nextBillingDate)}
+              Next: {formatDateRelative(sub.nextBillingDate)}
             </Text>
           )}
         </View>
 
         {/* Details */}
         <View style={{ backgroundColor: Colors.card, borderRadius: 8, borderWidth: 1, borderColor: Colors.border, paddingHorizontal: 16, marginBottom: 24 }}>
-          <InfoRow label="Category" value={categoryLabel(subscription.category)} />
-          <InfoRow label="Detection Source" value={subscription.detectionSource.toUpperCase()} />
-          <InfoRow label="Confidence" value={formatConfidence(subscription.confidenceScore)} accent />
-          <InfoRow label="Last Charge" value={formatDate(subscription.lastChargeDate)} />
-          <InfoRow label="First Detected" value={formatDate(subscription.createdAt)} />
+          <InfoRow label="Category" value={categoryLabel(sub.category)} />
+          <InfoRow label="Detection Source" value={sub.detectionSource.toUpperCase()} />
+          <InfoRow label="Confidence" value={formatConfidence(sub.confidenceScore)} accent />
+          <InfoRow label="Last Charge" value={formatDate(sub.lastChargeDate)} />
+          <InfoRow label="First Detected" value={formatDate(sub.createdAt)} />
         </View>
 
         {/* Actions */}
@@ -194,7 +196,7 @@ export default function SubscriptionDetailScreen() {
             </Text>
 
             {/* Direct cancellation link */}
-            {subscription.cancellationLink ? (
+            {sub.cancellationLink ? (
               <TouchableOpacity
                 onPress={handleOpenCancellationLink}
                 style={{

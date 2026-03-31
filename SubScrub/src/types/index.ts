@@ -203,5 +203,6 @@ export interface PurchaseResult {
 export interface RestoreResult {
   success: boolean;
   entitlementActive: boolean;
+  error?: string;
   isDemo?: boolean;
 }
