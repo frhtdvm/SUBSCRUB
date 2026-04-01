@@ -7,7 +7,7 @@ const HOST = process.env.HOST || '0.0.0.0';
 const PUBLIC = path.join(__dirname, 'public');
 
 const MIME = {
-  '.html': 'text/html',
+  '.html': 'text/html; charset=utf-8',
   '.js':   'application/javascript',
   '.css':  'text/css',
   '.png':  'image/png',
@@ -22,31 +22,39 @@ const MIME = {
 };
 
 const server = http.createServer((req, res) => {
-  let filePath = path.join(PUBLIC, req.url.split('?')[0]);
+  let urlPath = req.url.split('?')[0];
+  let filePath = path.join(PUBLIC, urlPath);
 
-  // If directory, try index.html
   if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
     filePath = path.join(filePath, 'index.html');
   }
-
-  // SPA fallback — serve index.html for unknown routes
   if (!fs.existsSync(filePath)) {
     filePath = path.join(PUBLIC, 'index.html');
   }
 
-  const ext  = path.extname(filePath);
+  const ext  = path.extname(filePath).toLowerCase();
   const mime = MIME[ext] || 'application/octet-stream';
 
   try {
-    const data = fs.readFileSync(filePath);
+    let data = fs.readFileSync(filePath);
+
+    // Patch JS bundles: replace import.meta (invalid outside ES modules)
+    // with a plain object so the bundle runs as a classic script
+    if (ext === '.js') {
+      let src = data.toString('utf8');
+      // Replace every occurrence of `import.meta` with a safe fallback object
+      src = src.replace(/import\.meta/g, '({"env":{"MODE":"production"}})');
+      data = Buffer.from(src, 'utf8');
+    }
+
     res.writeHead(200, { 'Content-Type': mime });
     res.end(data);
   } catch (e) {
     res.writeHead(500);
-    res.end('Server error');
+    res.end('Server error: ' + e.message);
   }
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`SubScrub web preview on http://${HOST}:${PORT}`);
+  console.log(`SubScrub web preview → http://${HOST}:${PORT}`);
 });
