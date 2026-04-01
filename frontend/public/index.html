@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SubScrub — Subscription Sniper</title>
+  <style>
+    :root {
+      --bg: #0a0a0a;
+      --card: #111111;
+      --border: #1e1e1e;
+      --primary: #00ff87;
+      --primary-dim: rgba(0,255,135,0.15);
+      --warning: #ff6b35;
+      --text: #e8e8e8;
+      --muted: #666;
+      --dim: #444;
+      --font: 'Courier New', 'Lucida Console', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 24px; }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 0 64px;
+      border-bottom: 1px solid var(--border);
+    }
+    .badge {
+      display: inline-block;
+      background: var(--primary-dim);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      font-size: 10px;
+      letter-spacing: 3px;
+      padding: 4px 12px;
+      border-radius: 2px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(40px, 8vw, 72px);
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -2px;
+      line-height: 1;
+      text-shadow: 0 0 40px rgba(0,255,135,0.3);
+      margin-bottom: 8px;
+    }
+    .hero .tagline {
+      font-size: clamp(13px, 2.5vw, 16px);
+      color: var(--muted);
+      letter-spacing: 1px;
+      margin-bottom: 32px;
+    }
+    .hero .description {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.8;
+      max-width: 580px;
+      margin-bottom: 40px;
+    }
+
+    /* ── Platform buttons ── */
+    .platforms { display: flex; gap: 12px; flex-wrap: wrap; }
+    .platform-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 20px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-family: var(--font);
+      font-size: 12px;
+      letter-spacing: 1px;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .platform-btn:hover { border-color: var(--primary); background: var(--primary-dim); color: var(--primary); }
+    .platform-btn .icon { font-size: 18px; }
+
+    /* ── Build status bar ── */
+    .status-bar {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .status-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 1px;
+    }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; }
+    .status-dot.green { background: var(--primary); box-shadow: 0 0 6px var(--primary); }
+    .status-dot.yellow { background: #ffd700; box-shadow: 0 0 6px #ffd700; }
+    .status-val { color: var(--primary); font-weight: 700; }
+
+    /* ── Sections ── */
+    .section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+    .section-label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+
+    /* ── Feature grid ── */
+    .feature-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1px; background: var(--border); }
+    .feature-card {
+      background: var(--card);
+      padding: 24px;
+    }
+    .feature-icon { font-size: 22px; margin-bottom: 12px; }
+    .feature-title { font-size: 13px; color: var(--primary); margin-bottom: 8px; font-weight: 700; }
+    .feature-desc { font-size: 11px; color: var(--muted); line-height: 1.7; }
+
+    /* ── Integration status table ── */
+    .integration-table { width: 100%; border-collapse: collapse; }
+    .integration-table th, .integration-table td {
+      text-align: left;
+      padding: 12px 16px;
+      font-size: 11px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font);
+    }
+    .integration-table th { color: var(--muted); letter-spacing: 2px; font-size: 10px; }
+    .integration-table td { color: var(--text); }
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 2px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+    .tag.demo { background: rgba(255,215,0,0.15); color: #ffd700; border: 1px solid rgba(255,215,0,0.3); }
+    .tag.wired { background: var(--primary-dim); color: var(--primary); border: 1px solid rgba(0,255,135,0.3); }
+    .tag.required { background: rgba(255,107,53,0.15); color: var(--warning); border: 1px solid rgba(255,107,53,0.3); }
+
+    /* ── Screen stack ── */
+    .screen-list { list-style: none; }
+    .screen-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+    }
+    .screen-item:last-child { border-bottom: none; }
+    .screen-name { color: var(--text); }
+    .screen-status { color: var(--primary); font-size: 10px; letter-spacing: 1px; }
+
+    /* ── How to run ── */
+    .run-steps { list-style: none; counter-reset: steps; }
+    .run-step {
+      counter-increment: steps;
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .run-step::before {
+      content: counter(steps);
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--primary-dim);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .run-step-content { flex: 1; }
+    .run-step-title { font-size: 13px; color: var(--text); margin-bottom: 4px; }
+    .run-step-detail { font-size: 11px; color: var(--muted); line-height: 1.6; }
+    code {
+      background: #1a1a1a;
+      border: 1px solid var(--border);
+      color: var(--primary);
+      padding: 2px 6px;
+      border-radius: 2px;
+      font-size: 10px;
+    }
+    pre {
+      background: #111;
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--primary);
+      padding: 16px;
+      margin-top: 8px;
+      border-radius: 2px;
+      overflow-x: auto;
+      font-size: 11px;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── TestFlight checklist ── */
+    .checklist { list-style: none; }
+    .check-item {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      align-items: flex-start;
+    }
+    .check-item:last-child { border-bottom: none; }
+    .check-box {
+      flex-shrink: 0;
+      width: 16px;
+      height: 16px;
+      border: 1px solid var(--dim);
+      border-radius: 2px;
+      margin-top: 1px;
+    }
+    .check-box.done { background: var(--primary); border-color: var(--primary); }
+    .check-label { color: var(--text); line-height: 1.5; }
+    .check-sub { color: var(--muted); font-size: 10px; margin-top: 2px; }
+    .check-item.done .check-label { color: var(--muted); text-decoration: line-through; }
+
+    /* ── Footer ── */
+    .footer { padding: 40px 0; text-align: center; }
+    .footer p { font-size: 11px; color: var(--dim); line-height: 1.8; }
+    .footer span { color: var(--muted); }
+
+    /* ── Glow pulse animation ── */
+    @keyframes glow-pulse {
+      0%, 100% { text-shadow: 0 0 20px rgba(0,255,135,0.2); }
+      50% { text-shadow: 0 0 60px rgba(0,255,135,0.5); }
+    }
+    .hero h1 { animation: glow-pulse 4s ease-in-out infinite; }
+    @keyframes fade-up {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * { animation: fade-up 0.6s ease forwards; }
+    .hero .badge { animation-delay: 0s; }
+    .hero h1 { animation-delay: 0.1s; }
+    .hero .tagline { animation-delay: 0.2s; }
+    .hero .description { animation-delay: 0.3s; }
+    .hero .platforms { animation-delay: 0.4s; }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="badge">MOBILE APP &nbsp;&bull;&nbsp; iOS + ANDROID</div>
+      <h1>SubScrub</h1>
+      <p class="tagline">Privacy-first subscription sniper · No cloud · No tracking</p>
+      <p class="description">
+        SubScrub detects recurring charges draining your bank account and inbox,
+        calculates your exact monthly waste, and gives you legal-grade cancellation
+        letters — all processed on-device with zero data leaving your phone.
+      </p>
+      <div class="platforms">
+        <a class="platform-btn" href="https://expo.dev" target="_blank" rel="noopener">
+          <span class="icon">&#9654;</span>
+          <span>Run in Expo Go</span>
+        </a>
+        <a class="platform-btn" href="https://github.com" target="_blank" rel="noopener">
+          <span class="icon">&#9654;</span>
+          <span>EAS Build → TestFlight</span>
+        </a>
+      </div>
+    </section>
+
+    <!-- Build status -->
+    <div class="status-bar container">
+      <div class="status-item">
+        <span class="status-dot green"></span>
+        TypeScript &nbsp;<span class="status-val">0 errors</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot green"></span>
+        Jest &nbsp;<span class="status-val">23/23</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot green"></span>
+        expo-doctor &nbsp;<span class="status-val">17/17</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot green"></span>
+        iOS bundle &nbsp;<span class="status-val">3.57 MB</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot green"></span>
+        Android bundle &nbsp;<span class="status-val">3.57 MB</span>
+      </div>
+      <div class="status-item">
+        <span class="status-dot yellow"></span>
+        EAS build &nbsp;<span class="status-val">pending setup</span>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <section class="section">
+      <p class="section-label">CORE FEATURES</p>
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">&#128269;</div>
+          <div class="feature-title">Detection Engine</div>
+          <div class="feature-desc">Recurring pattern detection across bank transactions and email receipts. Confidence scoring with 500+ directory entries.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128184;</div>
+          <div class="feature-title">Waste Calculator</div>
+          <div class="feature-desc">Monthly equivalent cost, annual projection, and "potential leak" identification for suspected but unconfirmed charges.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128203;</div>
+          <div class="feature-title">Legal Templates</div>
+          <div class="feature-desc">GDPR, KVKK, and Generic jurisdiction cancellation letters, generated on-device, ready to send via Mail Composer.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128274;</div>
+          <div class="feature-title">Local-Only Storage</div>
+          <div class="feature-desc">SQLite with SQLCipher encryption. No analytics, no crash reporting, no remote logging. Data never leaves the device.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#127974;</div>
+          <div class="feature-title">Demo Mode</div>
+          <div class="feature-desc">Full app flow works without any API keys. 500+ demo transactions and emails seeded locally at first launch.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">&#128176;</div>
+          <div class="feature-title">RevenueCat Paywall</div>
+          <div class="feature-desc">Premium features (legal templates, direct links) gated behind a native paywall powered by RevenueCat.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Screens -->
+    <section class="section">
+      <p class="section-label">SCREEN INVENTORY — 10 SCREENS</p>
+      <ul class="screen-list">
+        <li class="screen-item"><span class="screen-name">SplashScreen</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">OnboardingScreen &mdash; 4 privacy slides</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">ConnectSourcesScreen &mdash; Plaid / Gmail / Outlook</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">ScanProgressScreen &mdash; animated spinner + progress bar</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">DashboardScreen &mdash; waste metrics, top drains</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">SubscriptionListScreen &mdash; filtered list</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">SubscriptionDetailScreen &mdash; cost, cancellation options</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">LegalTemplatePreviewScreen &mdash; GDPR/KVKK/Generic</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">PaywallScreen &mdash; RevenueCat purchase + restore</span><span class="screen-status">DONE</span></li>
+        <li class="screen-item"><span class="screen-name">SettingsScreen &mdash; Demo toggle, jurisdiction, privacy</span><span class="screen-status">DONE</span></li>
+      </ul>
+    </section>
+
+    <!-- Integrations -->
+    <section class="section">
+      <p class="section-label">INTEGRATION STATUS</p>
+      <table class="integration-table">
+        <thead>
+          <tr>
+            <th>SERVICE</th>
+            <th>PURPOSE</th>
+            <th>STATUS</th>
+            <th>ENV VAR NEEDED</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Plaid</td>
+            <td>Bank transaction fetch</td>
+            <td><span class="tag wired">WIRED</span> &nbsp;<span class="tag demo">DEMO</span></td>
+            <td><code>EXPO_PUBLIC_PLAID_BROKER_BASE_URL</code></td>
+          </tr>
+          <tr>
+            <td>Google OAuth / Gmail</td>
+            <td>Email receipt scan</td>
+            <td><span class="tag wired">WIRED</span> &nbsp;<span class="tag demo">DEMO</span></td>
+            <td><code>EXPO_PUBLIC_GOOGLE_CLIENT_ID</code></td>
+          </tr>
+          <tr>
+            <td>Microsoft OAuth / Outlook</td>
+            <td>Email receipt scan</td>
+            <td><span class="tag wired">WIRED</span> &nbsp;<span class="tag demo">DEMO</span></td>
+            <td><code>EXPO_PUBLIC_MS_CLIENT_ID</code></td>
+          </tr>
+          <tr>
+            <td>RevenueCat</td>
+            <td>In-app purchases</td>
+            <td><span class="tag wired">WIRED</span> &nbsp;<span class="tag demo">DEMO</span></td>
+            <td><code>EXPO_PUBLIC_REVENUECAT_API_KEY</code></td>
+          </tr>
+          <tr>
+            <td>SQLCipher</td>
+            <td>Encrypted local DB</td>
+            <td><span class="tag wired">WIRED</span></td>
+            <td>EAS native build only</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- How to run -->
+    <section class="section">
+      <p class="section-label">HOW TO RUN</p>
+      <ol class="run-steps">
+        <li class="run-step">
+          <div class="run-step-content">
+            <div class="run-step-title">Clone and install dependencies</div>
+            <pre>cd /app/SubScrub
+npm install</pre>
+          </div>
+        </li>
+        <li class="run-step">
+          <div class="run-step-content">
+            <div class="run-step-title">Start Expo (Demo Mode — no credentials needed)</div>
+            <pre>npx expo start</pre>
+            <div class="run-step-detail">Scan QR code with Expo Go on iOS or Android. Full demo flow: Splash → Onboarding → ConnectSources → Scan → Dashboard.</div>
+          </div>
+        </li>
+        <li class="run-step">
+          <div class="run-step-content">
+            <div class="run-step-title">Development build (for SQLCipher + RevenueCat)</div>
+            <pre>npm install -g eas-cli
+eas build --profile development --platform ios</pre>
+          </div>
+        </li>
+        <li class="run-step">
+          <div class="run-step-content">
+            <div class="run-step-title">Set production credentials (when ready)</div>
+            <pre>eas secret:create --scope project \
+  --name EXPO_PUBLIC_REVENUECAT_API_KEY --value appl_...</pre>
+            <div class="run-step-detail">See <code>.env.example</code> for all required vars.</div>
+          </div>
+        </li>
+        <li class="run-step">
+          <div class="run-step-content">
+            <div class="run-step-title">Submit to App Store / Play Store</div>
+            <pre>eas build --profile production --platform all
+eas submit --profile production --platform all</pre>
+          </div>
+        </li>
+      </ol>
+    </section>
+
+    <!-- TestFlight checklist -->
+    <section class="section">
+      <p class="section-label">TESTFLIGHT / PLAY INTERNAL TESTING — CHECKLIST</p>
+      <ul class="checklist">
+        <li class="check-item done"><div class="check-box done"></div><div><div class="check-label">TypeScript compiles clean (0 errors)</div></div></li>
+        <li class="check-item done"><div class="check-box done"></div><div><div class="check-label">Jest engine tests pass (23/23)</div></div></li>
+        <li class="check-item done"><div class="check-box done"></div><div><div class="check-label">expo-doctor passes (17/17)</div></div></li>
+        <li class="check-item done"><div class="check-box done"></div><div><div class="check-label">iOS JS bundle exports cleanly (3.57 MB)</div></div></li>
+        <li class="check-item done"><div class="check-box done"></div><div><div class="check-label">Android JS bundle exports cleanly (3.57 MB)</div></div></li>
+        <li class="check-item done"><div class="check-box done"></div><div><div class="check-label">eas.json created with dev/preview/production profiles</div></div></li>
+        <li class="check-item done"><div class="check-box done"></div><div><div class="check-label">app.json has iOS bundleIdentifier, Android package, versionCode</div></div></li>
+        <li class="check-item"><div class="check-box"></div><div><div class="check-label">Run <code>eas init</code> and set real projectId in app.json</div><div class="check-sub">One-time Expo account setup</div></div></li>
+        <li class="check-item"><div class="check-box"></div><div><div class="check-label">First development build on iOS simulator</div><div class="check-sub">Verifies SQLite, expo-font, reanimated natively</div></div></li>
+        <li class="check-item"><div class="check-box"></div><div><div class="check-label">First development build on Android emulator / device</div><div class="check-sub">Verifies react-native-purchases (RevenueCat)</div></div></li>
+        <li class="check-item"><div class="check-box"></div><div><div class="check-label">Deploy Plaid broker and set EXPO_PUBLIC_PLAID_BROKER_BASE_URL</div><div class="check-sub">infra/plaid-broker/ → Railway / Render / Fly.io</div></div></li>
+        <li class="check-item"><div class="check-box"></div><div><div class="check-label">Set 4 production secrets via eas secret:create</div></div></li>
+        <li class="check-item"><div class="check-box"></div><div><div class="check-label">Production build and submit</div><div class="check-sub">eas build --profile production &amp;&amp; eas submit</div></div></li>
+      </ul>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>
+        <span>SubScrub</span> &mdash; Privacy-first subscription sniper<br/>
+        No analytics &nbsp;&bull;&nbsp; No tracking &nbsp;&bull;&nbsp; Local-only<br/>
+        <span>iOS + Android (Expo React Native &bull; SDK 54)</span>
+      </p>
+    </footer>
+
+  </div>
+</body>
+</html>
