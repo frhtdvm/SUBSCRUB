@@ -2,9 +2,13 @@ module.exports = function (api) {
   api.cache.using(() => process.env.NODE_ENV);
   const isTest = process.env.NODE_ENV === 'test';
   return {
-    presets: ['babel-preset-expo'],
-    plugins: [
+    presets: [
+      'babel-preset-expo',
+      // NativeWind v4 uses react-native-css-interop/babel which is a preset, not a plugin.
+      // Excluded from test env as it rewrites JSX and requires native modules.
       ...(isTest ? [] : ['nativewind/babel']),
+    ],
+    plugins: [
       [
         'module-resolver',
         {

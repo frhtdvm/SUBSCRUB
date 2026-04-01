@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, Animated } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, Animated, Easing } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import type { ScanProgressScreenProps } from '../navigation/types';
@@ -11,55 +11,72 @@ import { useAppStore } from '../store/useAppStore';
 
 type Nav = NativeStackNavigationProp<RootStackParamList, 'ScanProgress'>;
 
-const STAGES = [
-  'Initializing...',
-  'Connecting to sources...',
-  'Fetching bank transactions...',
-  'Scanning Gmail receipts...',
-  'Analyzing patterns...',
-  'Detecting subscriptions...',
-  'Building subscription list...',
-  'Calculating costs...',
-  'Done!',
-];
-
 export default function ScanProgressScreen() {
   const navigation = useNavigation<Nav>();
   const route = useRoute<ScanProgressScreenProps['route']>();
   const { runScan } = useScan();
   const store = useAppStore();
   const progressAnim = useRef(new Animated.Value(0)).current;
+  const spinAnim = useRef(new Animated.Value(0)).current;
   const hasStarted = useRef(false);
+  // Local flag — captures the moment scanProgress hits 100, before useScan resets it
+  const [scanDone, setScanDone] = useState(false);
 
+  // Start spinner rotation loop
+  useEffect(() => {
+    const spin = Animated.loop(
+      Animated.timing(spinAnim, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.linear,
+        useNativeDriver: true,
+      })
+    );
+    spin.start();
+    return () => spin.stop();
+  }, [spinAnim]);
+
+  // Kick off scan exactly once
   useEffect(() => {
     if (hasStarted.current) return;
     hasStarted.current = true;
-
     const sources = (route.params?.sources ?? ['plaid', 'gmail']) as ('plaid' | 'gmail' | 'outlook')[];
     runScan(sources);
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Animate progress bar to match store value
   useEffect(() => {
     Animated.timing(progressAnim, {
       toValue: store.scanProgress / 100,
       duration: 400,
       useNativeDriver: false,
     }).start();
-  }, [store.scanProgress]);
-
-  useEffect(() => {
-    if (!store.isScanning && store.scanProgress === 100) {
-      setTimeout(() => {
-        navigation.replace('Main');
-      }, 600);
+    // Capture done state here — useScan resets progress to 0 shortly after, so we
+    // must latch it while it's still 100.
+    if (store.scanProgress >= 100) {
+      setScanDone(true);
     }
-  }, [store.isScanning, store.scanProgress]);
+  }, [store.scanProgress, progressAnim]);
+
+  // Navigate when the scan completes
+  useEffect(() => {
+    if (!scanDone) return;
+    const timer = setTimeout(() => navigation.replace('Main'), 800);
+    return () => clearTimeout(timer);
+  }, [scanDone, navigation]);
+
+  const spinDeg = spinAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
+
+  const displayProgress = scanDone ? 100 : store.scanProgress;
 
   return (
     <ScreenContainer>
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 32 }}>
-        {/* Animated spinner */}
-        <View
+        {/* Rotating spinner */}
+        <Animated.View
           style={{
             width: 80,
             height: 80,
@@ -72,19 +89,20 @@ export default function ScanProgressScreen() {
             shadowOffset: { width: 0, height: 0 },
             shadowOpacity: 0.8,
             shadowRadius: 20,
+            transform: [{ rotate: spinDeg }],
           }}
         />
 
         <Text
           style={{
-            color: Colors.primary,
+            color: scanDone ? Colors.primary : Colors.text,
             fontSize: 22,
             fontFamily: 'SpaceMono',
             fontWeight: '700',
             marginBottom: 8,
           }}
         >
-          Scanning...
+          {scanDone ? 'Scan Complete' : 'Scanning...'}
         </Text>
 
         <Text
@@ -96,7 +114,7 @@ export default function ScanProgressScreen() {
             textAlign: 'center',
           }}
         >
-          {store.scanStage || 'Initializing...'}
+          {scanDone ? 'Loading dashboard...' : (store.scanStage || 'Initializing...')}
         </Text>
 
         {/* Progress bar */}
@@ -134,7 +152,7 @@ export default function ScanProgressScreen() {
             fontFamily: 'SpaceMono',
           }}
         >
-          {store.scanProgress}%
+          {displayProgress}%
         </Text>
 
         <View style={{ position: 'absolute', bottom: 40 }}>

@@ -3,20 +3,28 @@
     "name": "SubScrub",
     "slug": "subscrub",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.subscrub.app",
+      "buildNumber": "1",
       "infoPlist": {
-        "NSFaceIDUsageDescription": "Used to protect your local data.",
-        "NSCameraUsageDescription": "Not used by this app."
+        "NSFaceIDUsageDescription": "Used to protect your local subscription data.",
+        "NSCameraUsageDescription": "Not used by this app.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "config": {
+        "usesNonExemptEncryption": false
       }
     },
     "android": {
@@ -25,7 +33,15 @@
         "backgroundColor": "#000000"
       },
       "package": "com.subscrub.app",
-      "permissions": []
+      "versionCode": 1,
+      "permissions": [],
+      "blockedPermissions": [
+        "android.permission.READ_CONTACTS",
+        "android.permission.WRITE_CONTACTS",
+        "android.permission.READ_CALL_LOG",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -43,16 +59,26 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#000000",
-          "image": "./assets/splash.png",
+          "image": "./assets/splash-icon.png",
           "resizeMode": "contain"
         }
-      ]
+      ],
+      "expo-font",
+      "expo-mail-composer",
+      "expo-web-browser"
     ],
     "scheme": "subscrub",
     "extra": {
       "eas": {
         "projectId": "YOUR_EAS_PROJECT_ID"
       }
+    },
+    "owner": "YOUR_EXPO_USERNAME",
+    "updates": {
+      "url": "https://u.expo.dev/YOUR_EAS_PROJECT_ID",
+      "enabled": false,
+      "checkAutomatically": "ON_LOAD",
+      "fallbackToCacheTimeout": 0
     }
   }
 }
