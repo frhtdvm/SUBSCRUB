@@ -6,7 +6,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { AppNavigator } from './src/navigation/AppNavigator';
 
-SplashScreen.preventAutoHideAsync();
+try { SplashScreen.preventAutoHideAsync(); } catch {}
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -14,13 +14,13 @@ export default function App() {
   });
 
   React.useEffect(() => {
+    // Hide splash screen once fonts are ready (or after timeout fallback)
     if (fontsLoaded) {
-      SplashScreen.hideAsync();
+      try { SplashScreen.hideAsync(); } catch {}
     }
   }, [fontsLoaded]);
 
-  if (!fontsLoaded) return null;
-
+  // Don't block rendering on web — fonts load async but layout still works
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
