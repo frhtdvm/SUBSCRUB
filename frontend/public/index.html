@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
@@ -685,7 +685,7 @@ body {
     <div class="splash-name">SubScrub</div>
     <div class="splash-tag">THE SUBSCRIPTION SNIPER</div>
     <div class="splash-bar"></div>
-    <div class="splash-footer">GİZLİLİK ÖNCELİKLİ &nbsp;·&nbsp; YEREL DEPOLAMA</div>
+    <div class="splash-footer">PRIVACY-FIRST &nbsp;·&nbsp; LOCAL ONLY</div>
   </div>
 
   <!-- ── ONBOARDING ─────────────────────────────────────────────────────── -->
@@ -697,32 +697,32 @@ body {
           <div class="onb-icon-wrap">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </div>
-          <div class="onb-title">Unuttuğunuz ücretleri <span>buluyoruz.</span></div>
-          <div class="onb-desc">SubScrub, banka hareketlerinizi ve e-posta makbuzlarınızı tarayarak her yinelenen ücreti tespit eder — sinsi geçenler dahil.</div>
+          <div class="onb-title">We find charges <span>you forgot about.</span></div>
+          <div class="onb-desc">SubScrub scans your bank transactions and email receipts to detect every recurring charge — even the ones that sneak through.</div>
         </div>
         <!-- Slide 2 -->
         <div class="onb-slide">
           <div class="onb-icon-wrap">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
           </div>
-          <div class="onb-title">Ne kadar <span>harcandığını</span> gör.</div>
-          <div class="onb-desc">Aylık ve yıllık israfınızı hesaplar, en büyük delikleri sıralar ve unuttuğunuz her aboneliğin tam maliyetini gösterir.</div>
+          <div class="onb-title">See exactly how much <span>is leaking.</span></div>
+          <div class="onb-desc">We calculate your monthly and annual waste, rank your biggest drains, and show you the exact cost of every subscription you forgot you had.</div>
         </div>
         <!-- Slide 3 -->
         <div class="onb-slide">
           <div class="onb-icon-wrap">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
           </div>
-          <div class="onb-title">Hukuki mektupla <span>iptal et.</span></div>
-          <div class="onb-desc">GDPR, KVKK veya standart iptal mektupları anında oluşturulur. Doğrudan uygulamadan gönderin — kopyalama gerekmez.</div>
+          <div class="onb-title">Cancel with <span>legal-grade letters.</span></div>
+          <div class="onb-desc">Get GDPR, KVKK, or standard cancellation letters generated instantly. Send directly from the app — no copy-pasting required.</div>
         </div>
         <!-- Slide 4 -->
         <div class="onb-slide">
           <div class="onb-icon-wrap">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </div>
-          <div class="onb-title">Verileriniz cihazınızda <span>kalır.</span></div>
-          <div class="onb-desc">Analitik yok. İzleme yok. Bulut senkronizasyonu yok. Her şey yerel olarak işlenir ve depolanır. SubScrub verilerinizi okuyamaz — yalnızca siz okuyabilirsiniz.</div>
+          <div class="onb-title">Your data <span>never leaves your device.</span></div>
+          <div class="onb-desc">No analytics. No tracking. No cloud sync. Everything is processed and stored locally. SubScrub cannot read your data — only you can.</div>
         </div>
       </div>
     </div>
@@ -733,7 +733,7 @@ body {
         <div class="onb-dot" id="dot2"></div>
         <div class="onb-dot" id="dot3"></div>
       </div>
-      <button class="btn-primary" style="width:auto;padding:14px 28px;font-size:13px" id="onb-btn" onclick="onbNext()" data-testid="onboarding-next-btn">Devam</button>
+      <button class="btn-primary" style="width:auto;padding:14px 28px;font-size:13px" id="onb-btn" onclick="onbNext()" data-testid="onboarding-next-btn">Next</button>
     </div>
   </div>
 
@@ -750,15 +750,15 @@ body {
       <div class="radar-dot" style="top:60%;left:35%;animation-delay:0.7s"></div>
       <div class="radar-dot" style="top:45%;left:75%;animation-delay:1.4s"></div>
     </div>
-    <div class="scan-title" id="scan-title">Taranıyor...</div>
-    <div class="scan-stage" id="scan-stage">Başlatılıyor...</div>
+    <div class="scan-title" id="scan-title">Scanning...</div>
+    <div class="scan-stage" id="scan-stage">Initializing...</div>
     <div class="scan-bar-wrap">
       <div class="scan-bar-fill" id="scan-fill" style="width:0%"></div>
     </div>
-    <div class="scan-pct" id="scan-pct">%0</div>
+    <div class="scan-pct" id="scan-pct">0%</div>
     <div class="scan-found">
       <span id="scan-flash" class="scan-flash"></span>
-      CİHAZDA İŞLENİYOR · VERİ GÖNDERİLMİYOR
+      PROCESSED ON-DEVICE · NO DATA SENT
     </div>
   </div>
 
@@ -769,25 +769,25 @@ body {
       <div class="demo-pill">DEMO</div>
     </div>
     <div class="dash-hero">
-      <div class="hero-label">AYLIK POTANSİYEL KAYIP</div>
+      <div class="hero-label">MONTHLY POTENTIAL WASTE</div>
       <div class="hero-amount" id="hero-waste"></div>
-      <div class="hero-sub"><span id="hero-count"></span> şüpheli sızıntı tespit edildi &nbsp;·&nbsp; <span id="hero-annual"></span>/yıl</div>
+      <div class="hero-sub"><span id="hero-count"></span> suspected leaks detected &nbsp;·&nbsp; <span id="hero-annual"></span>/yr</div>
     </div>
     <div class="metric-row">
       <div class="metric-box green-box">
-        <div class="metric-lbl">TESPİT</div>
+        <div class="metric-lbl">DETECTED</div>
         <div class="metric-val green" id="m-count"></div>
       </div>
       <div class="metric-box">
-        <div class="metric-lbl">AYLIK</div>
+        <div class="metric-lbl">MONTHLY</div>
         <div class="metric-val" id="m-monthly"></div>
       </div>
       <div class="metric-box">
-        <div class="metric-lbl">YILLIK</div>
+        <div class="metric-lbl">ANNUAL</div>
         <div class="metric-val" id="m-annual"></div>
       </div>
     </div>
-    <div class="section-hdr">EN BÜYÜK SARF&#8203;İYATLAR</div>
+    <div class="section-hdr">TOP DRAINS</div>
     <div class="scroll-area">
       <div class="sub-list" id="dash-sub-list"></div>
     </div>
@@ -812,21 +812,21 @@ body {
   <!-- ── SETTINGS ──────────────────────────────────────────────────────── -->
   <div id="settings" class="screen" data-testid="settings-screen">
     <div class="settings-topbar">
-      <div class="settings-page-title">Ayarlar</div>
+      <div class="settings-page-title">Settings</div>
     </div>
     <div class="scroll-area">
       <div class="settings-body">
         <div class="settings-section">
-          <div class="settings-section-title">VERİ KAYNAĞI</div>
+          <div class="settings-section-title">DATA SOURCE</div>
           <div class="settings-list">
             <div class="settings-row">
               <div class="settings-row-left">
                 <div class="settings-row-icon icon-green">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
                 </div>
-                <span class="settings-key">Mod</span>
+                <span class="settings-key">Mode</span>
               </div>
-              <span class="settings-val yellow">Demo Modu</span>
+              <span class="settings-val yellow">Demo Mode</span>
             </div>
             <div class="settings-row">
               <div class="settings-row-left">
@@ -835,7 +835,7 @@ body {
                 </div>
                 <span class="settings-key">Plaid</span>
               </div>
-              <span class="settings-val">Bağlı değil</span>
+              <span class="settings-val">Not connected</span>
             </div>
             <div class="settings-row">
               <div class="settings-row-left">
@@ -844,12 +844,12 @@ body {
                 </div>
                 <span class="settings-key">Gmail</span>
               </div>
-              <span class="settings-val">Bağlı değil</span>
+              <span class="settings-val">Not connected</span>
             </div>
           </div>
         </div>
         <div class="settings-section">
-          <div class="settings-section-title">HUKUKİ YETKİ ALANI</div>
+          <div class="settings-section-title">LEGAL JURISDICTION</div>
           <div class="settings-list">
             <div class="jurisdiction-row">
               <button class="jur-btn active" id="j-GENERIC" onclick="setJurisdiction('GENERIC')" data-testid="jur-generic">GENERIC</button>
@@ -861,52 +861,52 @@ body {
                 <div class="settings-row-icon icon-green">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                 </div>
-                <span class="settings-key">Aktif Şablon</span>
+                <span class="settings-key">Active Template</span>
               </div>
-              <span class="settings-val green" id="active-jur">Standart Mektup</span>
+              <span class="settings-val green" id="active-jur">Standard Letter</span>
             </div>
           </div>
         </div>
         <div class="settings-section">
-          <div class="settings-section-title">GİZLİLİK</div>
+          <div class="settings-section-title">PRIVACY</div>
           <div class="settings-list">
             <div class="settings-row" style="cursor:default">
               <div class="settings-row-left">
                 <div class="settings-row-icon icon-green">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                 </div>
-                <span class="settings-key">Analitik</span>
+                <span class="settings-key">Analytics</span>
               </div>
-              <span class="settings-val green">YOK</span>
+              <span class="settings-val green">NONE</span>
             </div>
             <div class="settings-row" style="cursor:default">
               <div class="settings-row-left">
                 <div class="settings-row-icon icon-green">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
                 </div>
-                <span class="settings-key">Uzak İzleme</span>
+                <span class="settings-key">Remote Logging</span>
               </div>
-              <span class="settings-val green">YOK</span>
+              <span class="settings-val green">NONE</span>
             </div>
             <div class="settings-row" style="cursor:default">
               <div class="settings-row-left">
                 <div class="settings-row-icon icon-green">
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
                 </div>
-                <span class="settings-key">Depolama</span>
+                <span class="settings-key">Storage</span>
               </div>
-              <span class="settings-val green">Yalnızca Yerel</span>
+              <span class="settings-val green">Local Only</span>
             </div>
           </div>
         </div>
         <div class="settings-section">
-          <div class="settings-section-title">UYGULAMA HAKKINDA</div>
+          <div class="settings-section-title">ABOUT</div>
           <div class="settings-list">
             <div class="settings-row" style="cursor:default">
-              <span class="settings-key">Uygulama</span><span class="settings-val">SubScrub</span>
+              <span class="settings-key">App</span><span class="settings-val">SubScrub</span>
             </div>
             <div class="settings-row" style="cursor:default">
-              <span class="settings-key">Versiyon</span><span class="settings-val">1.0.0</span>
+              <span class="settings-key">Version</span><span class="settings-val">1.0.0</span>
             </div>
             <div class="settings-row" style="cursor:default">
               <span class="settings-key">Platform</span><span class="settings-val">iOS + Android</span>
@@ -925,11 +925,11 @@ body {
     </button>
     <button class="nav-item" id="nav-subs" onclick="showAllSubs()" data-testid="nav-subs">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-      <span class="nav-label">Abonelikler</span>
+      <span class="nav-label">Subscriptions</span>
     </button>
     <button class="nav-item" id="nav-settings" onclick="showScreen('settings')" data-testid="nav-settings">
       <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span class="nav-label">Ayarlar</span>
+      <span class="nav-label">Settings</span>
     </button>
   </nav>
 
@@ -937,19 +937,19 @@ body {
   <div id="letter-modal" data-testid="letter-modal">
     <div class="letter-sheet">
       <div class="letter-drag"></div>
-      <div class="letter-title" id="letter-title">İptal Mektubu</div>
+      <div class="letter-title" id="letter-title">Cancellation Letter</div>
       <div class="letter-subtitle" id="letter-subtitle"></div>
       <textarea class="letter-textarea" id="letter-textarea" readonly></textarea>
       <div class="letter-actions">
         <button class="btn-primary" onclick="copyLetter()" data-testid="letter-copy-btn">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
-          Kopyala
+          Copy
         </button>
-        <button class="btn-secondary" onclick="closeModal()" data-testid="letter-close-btn">Kapat</button>
+        <button class="btn-secondary" onclick="closeModal()" data-testid="letter-close-btn">Close</button>
       </div>
     </div>
   </div>
-  <div class="copied-toast" id="copied-toast">Kopyalandı!</div>
+  <div class="copied-toast" id="copied-toast">Copied!</div>
 
 </div><!-- /phone -->
 
@@ -962,18 +962,18 @@ const ICONS = {
 };
 
 const SUBS = [
-  {id:'s1', name:'Netflix', key:'netflix', amount:15.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.95, category:'Eğlence', source:'Banka', cancellationLink:'https://www.netflix.com/cancelplan'},
-  {id:'s2', name:'Spotify', key:'spotify', amount:9.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.92, category:'Eğlence', source:'Banka', cancellationLink:'https://www.spotify.com/account/subscription/cancel'},
-  {id:'s3', name:'Adobe Creative Cloud', key:'adobe', amount:54.99, currency:'USD', freq:'Aylık', status:'potential_leak', confidence:0.58, category:'Yazılım', source:'Banka', cancellationLink:'https://account.adobe.com/plans'},
-  {id:'s4', name:'ChatGPT Plus', key:'chatgpt', amount:20.00, currency:'USD', freq:'Aylık', status:'active', confidence:0.88, category:'Yapay Zeka', source:'Banka', cancellationLink:'https://chat.openai.com/'},
-  {id:'s5', name:'Microsoft 365', key:'microsoft', amount:9.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.91, category:'Yazılım', source:'Banka', cancellationLink:'https://account.microsoft.com/services'},
-  {id:'s6', name:'Disney+', key:'disney', amount:13.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.87, category:'Eğlence', source:'Banka', cancellationLink:'https://www.disneyplus.com/en-gb/unsub-preview'},
-  {id:'s7', name:'iCloud+', key:'icloud', amount:2.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.93, category:'Depolama', source:'Banka', cancellationLink:'https://support.apple.com/en-us/HT207828'},
-  {id:'s8', name:'NordVPN', key:'nordvpn', amount:11.99, currency:'USD', freq:'Aylık', status:'potential_leak', confidence:0.52, category:'Güvenlik', source:'Banka', cancellationLink:'https://my.nordaccount.com/dashboard/nordvpn/'},
-  {id:'s9', name:'GitHub Pro', key:'github', amount:4.00, currency:'USD', freq:'Aylık', status:'active', confidence:0.86, category:'Geliştirici', source:'Banka', cancellationLink:'https://github.com/settings/billing'},
-  {id:'s10', name:'Notion', key:'notion', amount:8.00, currency:'USD', freq:'Aylık', status:'active', confidence:0.81, category:'Verimlilik', source:'Banka', cancellationLink:'https://www.notion.so/my-account'},
-  {id:'s11', name:'Hulu', key:'hulu', amount:17.99, currency:'USD', freq:'Aylık', status:'potential_leak', confidence:0.55, category:'Eğlence', source:'E-posta', cancellationLink:'https://secure.hulu.com/cancel'},
-  {id:'s12', name:'Zyxw Technologies', key:'zyxw', amount:29.99, currency:'USD', freq:'Aylık', status:'potential_leak', confidence:0.41, category:'Bilinmeyen', source:'Banka', cancellationLink:null},
+  {id:'s1', name:'Netflix', key:'netflix', amount:15.99, currency:'USD', freq:'Monthly', status:'active', confidence:0.95, category:'Entertainment', source:'Bank', cancellationLink:'https://www.netflix.com/cancelplan'},
+  {id:'s2', name:'Spotify', key:'spotify', amount:9.99, currency:'USD', freq:'Monthly', status:'active', confidence:0.92, category:'Entertainment', source:'Bank', cancellationLink:'https://www.spotify.com/account/subscription/cancel'},
+  {id:'s3', name:'Adobe Creative Cloud', key:'adobe', amount:54.99, currency:'USD', freq:'Monthly', status:'potential_leak', confidence:0.58, category:'Software', source:'Bank', cancellationLink:'https://account.adobe.com/plans'},
+  {id:'s4', name:'ChatGPT Plus', key:'chatgpt', amount:20.00, currency:'USD', freq:'Monthly', status:'active', confidence:0.88, category:'AI', source:'Bank', cancellationLink:'https://chat.openai.com/'},
+  {id:'s5', name:'Microsoft 365', key:'microsoft', amount:9.99, currency:'USD', freq:'Monthly', status:'active', confidence:0.91, category:'Software', source:'Bank', cancellationLink:'https://account.microsoft.com/services'},
+  {id:'s6', name:'Disney+', key:'disney', amount:13.99, currency:'USD', freq:'Monthly', status:'active', confidence:0.87, category:'Entertainment', source:'Bank', cancellationLink:'https://www.disneyplus.com/en-gb/unsub-preview'},
+  {id:'s7', name:'iCloud+', key:'icloud', amount:2.99, currency:'USD', freq:'Monthly', status:'active', confidence:0.93, category:'Storage', source:'Bank', cancellationLink:'https://support.apple.com/en-us/HT207828'},
+  {id:'s8', name:'NordVPN', key:'nordvpn', amount:11.99, currency:'USD', freq:'Monthly', status:'potential_leak', confidence:0.52, category:'Security', source:'Bank', cancellationLink:'https://my.nordaccount.com/dashboard/nordvpn/'},
+  {id:'s9', name:'GitHub Pro', key:'github', amount:4.00, currency:'USD', freq:'Monthly', status:'active', confidence:0.86, category:'Developer', source:'Bank', cancellationLink:'https://github.com/settings/billing'},
+  {id:'s10', name:'Notion', key:'notion', amount:8.00, currency:'USD', freq:'Monthly', status:'active', confidence:0.81, category:'Productivity', source:'Bank', cancellationLink:'https://www.notion.so/my-account'},
+  {id:'s11', name:'Hulu', key:'hulu', amount:17.99, currency:'USD', freq:'Monthly', status:'potential_leak', confidence:0.55, category:'Entertainment', source:'Email', cancellationLink:'https://secure.hulu.com/cancel'},
+  {id:'s12', name:'Zyxw Technologies', key:'zyxw', amount:29.99, currency:'USD', freq:'Monthly', status:'potential_leak', confidence:0.41, category:'Unknown', source:'Bank', cancellationLink:null},
 ];
 
 const SCAN_NAMES = ['Netflix', 'Spotify', 'Adobe', 'AWS', 'Dropbox', 'Slack', 'Zoom', 'Figma', 'Linear', 'Notion', 'GitHub', 'Vercel', 'Apple', 'Google', 'Microsoft', 'Hulu', 'Disney+', 'NordVPN', 'ChatGPT', 'Canva'];
@@ -984,7 +984,7 @@ let prevScreen = 'dashboard';
 
 // ── Utils ──────────────────────────────────────────────────────────────────
 function fmt(a, c='USD'){
-  return new Intl.NumberFormat('tr-TR', {style:'currency', currency:c, minimumFractionDigits:2}).format(a);
+  return new Intl.NumberFormat('en-US', {style:'currency', currency:c, minimumFractionDigits:2}).format(a);
 }
 function monthlyTotal(){ return SUBS.reduce((a,s)=>a+s.amount,0); }
 function wasteTotal(){ return SUBS.filter(s=>s.status==='potential_leak').reduce((a,s)=>a+s.amount,0); }
@@ -1026,7 +1026,7 @@ function onbNext(){
     onbSlide++;
     document.getElementById('onb-track').style.transform = `translateX(-${onbSlide*100}%)`;
     document.querySelectorAll('.onb-dot').forEach((d,i)=>d.classList.toggle('active', i===onbSlide));
-    if(onbSlide===3) document.getElementById('onb-btn').textContent = 'Taramayı Başlat';
+    if(onbSlide===3) document.getElementById('onb-btn').textContent = 'Start Scan';
   } else {
     startScan();
   }
@@ -1034,14 +1034,14 @@ function onbNext(){
 
 // ── Scan ───────────────────────────────────────────────────────────────────
 const STAGES = [
-  [0,'Kaynaklar bağlanıyor...'],
-  [12,'Banka hareketleri alınıyor...'],
-  [28,'E-posta makbuzları taranıyor...'],
-  [45,'Örüntüler analiz ediliyor...'],
-  [62,'Abonelikler tespit ediliyor...'],
-  [78,'Maliyetler hesaplanıyor...'],
-  [92,'Liste oluşturuluyor...'],
-  [100,'Tamamlandı!'],
+  [0,'Connecting to sources...'],
+  [12,'Fetching bank transactions...'],
+  [28,'Scanning email receipts...'],
+  [45,'Analyzing patterns...'],
+  [62,'Detecting subscriptions...'],
+  [78,'Calculating costs...'],
+  [92,'Building your list...'],
+  [100,'Done!'],
 ];
 
 function startScan(){
@@ -1051,7 +1051,7 @@ function startScan(){
   const flashEl = document.getElementById('scan-flash');
 
   const flashInterval = setInterval(()=>{
-    flashEl.textContent = SCAN_NAMES[flashIdx % SCAN_NAMES.length] + ' TESPİT EDİLDİ';
+    flashEl.textContent = SCAN_NAMES[flashIdx % SCAN_NAMES.length] + ' DETECTED';
     flashEl.classList.add('show');
     setTimeout(()=>flashEl.classList.remove('show'), 300);
     flashIdx++;
@@ -1066,10 +1066,10 @@ function startScan(){
     }
     const [pct, label] = STAGES[si++];
     document.getElementById('scan-fill').style.width = pct + '%';
-    document.getElementById('scan-pct').textContent = '%' + pct;
+    document.getElementById('scan-pct').textContent = pct + '%';
     document.getElementById('scan-stage').textContent = label;
     if(pct >= 100){
-      document.getElementById('scan-title').textContent = 'Tarama Tamamlandı';
+      document.getElementById('scan-title').textContent = 'Scan Complete';
     }
     setTimeout(step, si<=2?700:si<=5?550:400);
   }
@@ -1106,13 +1106,13 @@ function subCard(s){
     <div class="sub-info">
       <div class="sub-name-row">
         <div class="sub-name">${s.name}</div>
-        <div class="status-chip ${isLeak?'chip-leak':'chip-active'}">${isLeak?'SIZINTI':'AKTİF'}</div>
+        <div class="status-chip ${isLeak?'chip-leak':'chip-active'}">${isLeak?'LEAK':'ACTIVE'}</div>
       </div>
       <div class="sub-meta">${s.freq.toUpperCase()} · ${s.source.toUpperCase()}</div>
     </div>
     <div class="sub-right">
       <div class="sub-amount ${isLeak?'red':'green'}">${fmt(s.amount)}</div>
-      <div class="sub-conf">%${Math.round(s.confidence*100)} güven</div>
+      <div class="sub-conf">${Math.round(s.confidence*100)}% conf.</div>
     </div>
   </div>`;
 }
@@ -1133,28 +1133,28 @@ function showDetail(id){
   const isLeak = s.status === 'potential_leak';
 
   document.getElementById('detail-name').textContent = s.name;
-  document.getElementById('detail-status').innerHTML = `<div class="status-chip ${isLeak?'chip-leak':'chip-active'}">${isLeak?'POTANSİYEL SIZINTI':'DOĞRULANMIŞ AKTİF'}</div>`;
+  document.getElementById('detail-status').innerHTML = `<div class="status-chip ${isLeak?'chip-leak':'chip-active'}">${isLeak?'POTENTIAL LEAK':'VERIFIED ACTIVE'}</div>`;
 
   document.getElementById('detail-body').innerHTML = `
     <div class="cost-card ${isLeak?'red-card':'green-card'}">
-      <div class="cost-lbl">${s.freq.toUpperCase()} ÜCRET</div>
+      <div class="cost-lbl">${s.freq.toUpperCase()} CHARGE</div>
       <div class="cost-num ${isLeak?'red':'green'}">${fmt(s.amount, s.currency)}</div>
-      <div class="cost-annual">${fmt(s.amount*12, s.currency)}/yıl · Tahmini</div>
+      <div class="cost-annual">${fmt(s.amount*12, s.currency)}/yr · Estimated</div>
     </div>
     <div class="info-table">
-      <div class="info-row"><span class="info-key">Kategori</span><span class="info-val">${s.category}</span></div>
-      <div class="info-row"><span class="info-key">Kaynak</span><span class="info-val">${s.source.toUpperCase()}</span></div>
-      <div class="info-row"><span class="info-key">Güven Skoru</span><span class="info-val ${isLeak?'red':'green'}">%${Math.round(s.confidence*100)}</span></div>
-      <div class="info-row"><span class="info-key">Yıllık Maliyet</span><span class="info-val">${fmt(s.amount*12, s.currency)}</span></div>
-      <div class="info-row"><span class="info-key">Yetki Alanı</span><span class="info-val">${currentJurisdiction}</span></div>
+      <div class="info-row"><span class="info-key">Category</span><span class="info-val">${s.category}</span></div>
+      <div class="info-row"><span class="info-key">Source</span><span class="info-val">${s.source.toUpperCase()}</span></div>
+      <div class="info-row"><span class="info-key">Confidence</span><span class="info-val ${isLeak?'red':'green'}">${Math.round(s.confidence*100)}%</span></div>
+      <div class="info-row"><span class="info-key">Annual Cost</span><span class="info-val">${fmt(s.amount*12, s.currency)}</span></div>
+      <div class="info-row"><span class="info-key">Jurisdiction</span><span class="info-val">${currentJurisdiction}</span></div>
     </div>
     ${s.cancellationLink ? `<button class="btn-primary" onclick="window.open('${s.cancellationLink}','_blank')" data-testid="cancel-link-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-      ${s.name} İptal Et
+      ${s.name} Cancel
     </button>` : ''}
     <button class="btn-${isLeak?'danger':'secondary'}" onclick="showLetter('${s.id}')" data-testid="generate-letter-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
-      ${currentJurisdiction} İptal Mektubu Oluştur
+      Generate ${currentJurisdiction} Letter
     </button>
   `;
   showScreen('detail');
@@ -1165,14 +1165,14 @@ function showLetter(id){
   const s = SUBS.find(x=>x.id===id);
   if(!s) return;
   const templates = {
-    GENERIC: `Sayın ${s.name} Destek Ekibi,\n\nBu mektup aracılığıyla ${s.freq.toLowerCase()} aboneliğimin (${fmt(s.amount, s.currency)}) derhal iptal edilmesini talep ediyorum.\n\nLütfen iptal işlemini 5 iş günü içinde onaylayın ve daha fazla ücret talep etmeyin.\n\nSaygılarımla,\n[Adınız]`,
-    GDPR: `Sayın ${s.name} Veri Sorumlusu,\n\nGDPR Madde 17 (Silinme Hakkı) ve Madde 7/3 (Onayı Geri Çekme Hakkı) kapsamında, kişisel verilerimi işlemeye verdiğim onayı geri alıyor ve aşağıdakileri talep ediyorum:\n\n1. Aboneliğimin derhal iptali\n2. Tutulan tüm kişisel verilerin silinmesi\n3. 30 gün içinde uyumluluk teyidi\n\nAbonelik: ${s.freq} plan · ${fmt(s.amount, s.currency)}\n\nSaygılarımla,\n[Adınız]`,
-    KVKK: `Sayın ${s.name} Yetkilileri,\n\n6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) Madde 7 kapsamında;\n\n1. Aboneliğimin derhal iptali,\n2. Kişisel verilerimin imha edilmesi,\n3. 30 gün içinde yazılı bildirim yapılması\n\ntaleplerimi iletiyorum.\n\nAbonelik: ${s.freq} plan · ${fmt(s.amount, s.currency)}\n\nSaygılarımla,\n[Adınız]`,
+    GENERIC: `Dear ${s.name} Support Team,\n\nI hereby request the immediate cancellation of my subscription (${s.freq.toLowerCase()} plan, ${fmt(s.amount, s.currency)}).\n\nPlease confirm cancellation within 5 business days and cease any further charges.\n\nSincerely,\n[Your Name]`,
+    GDPR: `Dear ${s.name} Data Controller,\n\nPursuant to Article 17 of the GDPR (Right to Erasure) and Article 7(3) (Right to Withdraw Consent), I hereby withdraw my consent to process my personal data and request:\n\n1. Immediate cancellation of my subscription\n2. Deletion of all personal data held\n3. Confirmation of compliance within 30 days\n\nSubscription: ${s.freq} plan · ${fmt(s.amount, s.currency)}\n\nSincerely,\n[Your Name]`,
+    KVKK: `Dear ${s.name} Data Controller,\n\nPursuant to Article 7 of the Personal Data Protection Law No. 6698 (KVKK), I hereby request:\n\n1. Immediate cancellation of my subscription\n2. Deletion/destruction of all my personal data\n3. Written confirmation within 30 days\n\nSubscription: ${s.freq} plan · ${fmt(s.amount, s.currency)}\n\nSincerely,\n[Your Name]`,
   };
   const text = templates[currentJurisdiction] || templates.GENERIC;
-  const jLabels = {GENERIC:'Standart İptal', GDPR:'GDPR İptal', KVKK:'KVKK İptal'};
-  document.getElementById('letter-title').textContent = jLabels[currentJurisdiction] + ' Mektubu';
-  document.getElementById('letter-subtitle').textContent = `${s.name} · ${currentJurisdiction} yetki alanı`;
+  const jLabels = {GENERIC:'Standard Cancellation', GDPR:'GDPR Cancellation', KVKK:'KVKK Cancellation'};
+  document.getElementById('letter-title').textContent = jLabels[currentJurisdiction] + ' Letter';
+  document.getElementById('letter-subtitle').textContent = `${s.name} · ${currentJurisdiction} jurisdiction`;
   document.getElementById('letter-textarea').value = text;
   document.getElementById('letter-modal').classList.add('open');
 }
@@ -1195,7 +1195,7 @@ function closeModal(){
 }
 
 // ── Settings ───────────────────────────────────────────────────────────────
-const JUR_LABELS = {GENERIC:'Standart Mektup', GDPR:'AB Veri Koruma (GDPR)', KVKK:'Türkiye Veri Koruma (KVKK)'};
+const JUR_LABELS = {GENERIC:'Standard Letter', GDPR:'EU Data Protection (GDPR)', KVKK:'Turkey Data Protection (KVKK)'};
 function setJurisdiction(j){
   currentJurisdiction = j;
   ['GENERIC','GDPR','KVKK'].forEach(jj=>{
