@@ -301,6 +301,6 @@ function getBankingConnector(country: string): BankingConnector {
 | 3b | BDDK (Turkey) | ✅ DONE | Web simulator — Garanti, İşbank, Akbank, YKB, Ziraat + 5 more |
 | 3c | TrueLayer (EU) | ✅ DONE | Web simulator — Revolut, Monzo, N26, HSBC, Barclays + 5 more |
 | 3d | Lean (MENA) | ✅ DONE | Web simulator — Emirates NBD, Al Rajhi, CIB + 6 more |
-| 4 | AI Analysis | ⬜ PENDING | |
+| 4 | AI Analysis | ✅ DONE | GPT-4.1-mini, FastAPI backend, localStorage cache, Pro gated |
 | 5 | Lean Tech (MENA) | ⬜ PENDING | |
 | 6 | Salt Edge (Global) | ⬜ PENDING | |

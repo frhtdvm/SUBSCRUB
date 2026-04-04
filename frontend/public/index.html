@@ -934,6 +934,58 @@ body {
 .nudge-sub { font-size: 11px; color: var(--text2); margin-top: 2px; }
 .nudge-arrow { margin-left: auto; color: var(--text3); flex-shrink: 0; }
 
+/* ── AI Analysis UI ──────────────────────────────────────────────────────── */
+.ai-analyze-btn {
+  width: 100%; padding: 15px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.15), rgba(57,255,20,0.05));
+  border: 1px solid rgba(139,92,246,0.3);
+  border-radius: var(--r); cursor: pointer;
+  display: flex; align-items: center; gap: 12px;
+  transition: all 0.2s; margin-top: 10px;
+  color: var(--text); font-family: var(--font-body);
+}
+.ai-analyze-btn:hover { border-color: rgba(139,92,246,0.5); background: rgba(139,92,246,0.2); }
+.ai-analyze-btn:active { transform: scale(0.98); }
+.ai-analyze-btn.loading { pointer-events: none; opacity: 0.7; }
+.ai-btn-icon {
+  width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;
+  background: rgba(139,92,246,0.2); border: 1px solid rgba(139,92,246,0.3);
+  display: flex; align-items: center; justify-content: center;
+}
+.ai-btn-text { flex: 1; text-align: left; }
+.ai-btn-title { font-size: 13px; font-weight: 700; }
+.ai-btn-sub   { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.ai-spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(139,92,246,0.3);
+  border-top-color: #8B5CF6;
+  animation: spin 0.8s linear infinite; flex-shrink: 0;
+}
+.ai-result-card {
+  border-radius: var(--r); padding: 18px; margin-top: 10px;
+  background: linear-gradient(135deg, rgba(139,92,246,0.1), rgba(57,255,20,0.04));
+  border: 1px solid rgba(139,92,246,0.25);
+  animation: fadeIn 0.4s ease;
+}
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.ai-result-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.ai-badge {
+  font-size: 8px; font-weight: 700; letter-spacing: 1.5px;
+  padding: 3px 8px; border-radius: 100px;
+  background: rgba(139,92,246,0.2); color: #8B5CF6;
+  border: 1px solid rgba(139,92,246,0.3);
+}
+.ai-result-service { font-family: var(--font-head); font-size: 17px; font-weight: 800; }
+.ai-result-rows { display: flex; flex-direction: column; gap: 8px; }
+.ai-result-row { display: flex; justify-content: space-between; font-size: 12px; }
+.ai-result-key { color: var(--text2); }
+.ai-result-val { font-weight: 600; }
+.ai-result-val.purple { color: #8B5CF6; }
+.ai-result-val.green  { color: var(--green); }
+.ai-result-val.red    { color: var(--red); }
+.ai-result-val.yellow { color: #FFD700; }
+.ai-notes { font-size: 11px; color: var(--text2); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); line-height: 1.6; font-style: italic; }
+
 /* ── CONNECT SOURCE SCREEN ───────────────────────────────────────────────── */
 #connect { background: var(--base); }
 .connect-topbar { padding: 56px 24px 8px; flex-shrink: 0; }
@@ -2175,6 +2227,7 @@ function showDetail(id){
       </div>
       <svg class="nudge-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
     </div>`}
+    ${renderAIButton(s)}
   `;
   showScreen('detail');
 }
@@ -2500,6 +2553,134 @@ function generateBankTransactions(bank){
   ];
   const extras = isUS?usExtra : isTR?trExtra : isEU?euExtra : menaExtra;
   return [...base, ...extras];
+}
+
+// ── AI Transaction Analysis ────────────────────────────────────────────────
+const AI_CACHE_KEY = 'subscrub_ai_cache';
+function getAICache(){ try{ return JSON.parse(localStorage.getItem(AI_CACHE_KEY)||'{}'); }catch(e){ return {}; } }
+function setAICache(key, val){ const c=getAICache(); c[key]=val; localStorage.setItem(AI_CACHE_KEY, JSON.stringify(c)); }
+
+async function runAIAnalysis(subId){
+  const s = SUBS.find(x=>x.id===subId);
+  if(!s) return;
+
+  // Check cache first
+  const cacheKey = s.name.toLowerCase().trim();
+  const cached = getAICache()[cacheKey];
+  if(cached){ renderAIResult(subId, cached, true); return; }
+
+  // Update button to loading state
+  const btn = document.getElementById('ai-btn-'+subId);
+  if(btn){
+    btn.classList.add('loading');
+    btn.querySelector('.ai-btn-title').textContent = 'Analyzing with AI...';
+    btn.innerHTML = btn.innerHTML.replace('</div>\n    <div class="ai-btn-text">', '</div><div class="ai-btn-text">');
+    const spinnerEl = btn.querySelector('.ai-spinner') || (() => {
+      const sp = document.createElement('div');
+      sp.className = 'ai-spinner';
+      btn.appendChild(sp);
+      return sp;
+    })();
+  }
+
+  try {
+    const resp = await fetch('/api/analyze/transaction', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({merchant_name: s.name, amount: s.amount, currency: s.currency || 'USD'})
+    });
+    if(!resp.ok) throw new Error('API error ' + resp.status);
+    const result = await resp.json();
+    setAICache(cacheKey, result);
+    renderAIResult(subId, result, false);
+  } catch(err) {
+    const btn2 = document.getElementById('ai-btn-'+subId);
+    if(btn2){
+      btn2.classList.remove('loading');
+      btn2.querySelector('.ai-btn-title').textContent = 'AI Analysis failed. Try again.';
+      btn2.querySelector('.ai-btn-sub').textContent = err.message;
+    }
+  }
+}
+
+function renderAIResult(subId, result, fromCache){
+  // Remove the button
+  const btn = document.getElementById('ai-btn-'+subId);
+  if(btn) btn.remove();
+
+  // Remove existing result if any
+  const existing = document.getElementById('ai-result-'+subId);
+  if(existing) existing.remove();
+
+  const confPct = Math.round(result.confidence * 100);
+  const confClass = result.confidence >= 0.7 ? 'green' : result.confidence >= 0.4 ? 'yellow' : 'red';
+  const isSubClass = result.is_subscription ? 'red' : 'green';
+  const isSubText  = result.is_subscription ? 'YES — Subscription' : 'NO — One-time charge';
+
+  const card = document.createElement('div');
+  card.className = 'ai-result-card';
+  card.id = 'ai-result-'+subId;
+  card.innerHTML = `
+    <div class="ai-result-header">
+      <span class="ai-badge">AI ANALYSIS${fromCache?' · CACHED':''}</span>
+    </div>
+    <div class="ai-result-service">${result.service_name}</div>
+    <div style="margin-top:14px" class="ai-result-rows">
+      <div class="ai-result-row">
+        <span class="ai-result-key">Category</span>
+        <span class="ai-result-val purple">${result.category}</span>
+      </div>
+      <div class="ai-result-row">
+        <span class="ai-result-key">Subscription?</span>
+        <span class="ai-result-val ${isSubClass}">${isSubText}</span>
+      </div>
+      <div class="ai-result-row">
+        <span class="ai-result-key">AI Confidence</span>
+        <span class="ai-result-val ${confClass}">${confPct}%</span>
+      </div>
+      ${result.cancellation_url ? `
+      <div class="ai-result-row" style="margin-top:4px">
+        <span class="ai-result-key">Cancellation</span>
+        <span class="ai-result-val" style="max-width:180px;text-align:right">
+          <a href="${result.cancellation_url}" target="_blank" style="color:var(--green);text-decoration:none;font-size:11px">Open cancellation page →</a>
+        </span>
+      </div>` : ''}
+    </div>
+    ${result.notes ? `<div class="ai-notes">"${result.notes}"</div>` : ''}
+  `;
+
+  // Insert after info-table
+  const infoTable = document.querySelector('#detail-body .info-table');
+  if(infoTable) infoTable.after(card);
+  else document.getElementById('detail-body').appendChild(card);
+}
+
+function renderAIButton(s){
+  const needsAI = s.confidence < 0.65 || s.category === 'Unknown' || s.category === 'Bilinmeyen';
+  if(!needsAI) return '';
+  if(!isPro) return `
+    <div class="upgrade-nudge" onclick="openPaywall()" style="margin-top:10px" data-testid="upgrade-nudge">
+      <div class="nudge-lock">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#52525B" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div>
+        <div class="nudge-title">Analyze with AI (GPT-4.1 mini)</div>
+        <div class="nudge-sub">Identify unknown charges — SubScrub Pro</div>
+      </div>
+      <svg class="nudge-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`;
+
+  return `
+    <button class="ai-analyze-btn" id="ai-btn-${s.id}" onclick="runAIAnalysis('${s.id}')" data-testid="ai-analyze-btn">
+      <div class="ai-btn-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/><circle cx="18" cy="6" r="3"/></svg>
+      </div>
+      <div class="ai-btn-text">
+        <div class="ai-btn-title">Analyze with AI</div>
+        <div class="ai-btn-sub">GPT-4.1 mini · Identify this charge</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#8B5CF6" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>`;
 }
 
 // ── Settings ───────────────────────────────────────────────────────────────
