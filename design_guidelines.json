@@ -1,0 +1,121 @@
+{
+  "project_name": "SubScrub",
+  "tagline": "THE SUBSCRIPTION SNIPER",
+  "theme": "dark",
+  "archetype": "Archetype 7 (Electric & Neon) + Archetype 5 (Jewel & Luxury)",
+  "design_philosophy": "A premium, high-end fintech mobile app simulator built as a single HTML file. It must feel like Robinhood or Cash App—deep void backgrounds, glassmorphism cards, and striking electric neon accents. The app creates a sense of urgency around 'leaks' (wasted subscriptions) and satisfaction in 'sniping' (canceling) them.",
+  "tech_stack_instructions": {
+    "framework": "Vanilla HTML/CSS/JS",
+    "styling": "Tailwind CSS via CDN (<script src=\"https://cdn.tailwindcss.com\"></script>). Add custom configuration in the script tag.",
+    "icons": "Use Phosphor Icons via CDN (<script src=\"https://unpkg.com/@phosphor-icons/web\"></script>) or Lucide via CDN.",
+    "fonts": "Google Fonts (Outfit for headings, Manrope for body)",
+    "file_structure": "Everything MUST be inside a single file named `index.html`. Do not use React or external bundlers."
+  },
+  "colors": {
+    "background": {
+      "base": "#0A0A0A",
+      "surface": "#141414",
+      "surface_glass": "rgba(20, 20, 20, 0.6)"
+    },
+    "text": {
+      "primary": "#FFFFFF",
+      "secondary": "#A1A1AA",
+      "muted": "#52525B"
+    },
+    "accent": {
+      "primary": "#39FF14",
+      "primary_glow": "rgba(57, 255, 20, 0.4)",
+      "leak_warning": "#FF3366",
+      "leak_glow": "rgba(255, 51, 102, 0.4)"
+    },
+    "border": {
+      "subtle": "rgba(255, 255, 255, 0.05)",
+      "light": "rgba(255, 255, 255, 0.1)"
+    }
+  },
+  "typography": {
+    "headings": {
+      "font_family": "'Outfit', sans-serif",
+      "weights": ["400", "600", "800"],
+      "tracking": "tracking-tight"
+    },
+    "body": {
+      "font_family": "'Manrope', sans-serif",
+      "weights": ["400", "500", "600"]
+    }
+  },
+  "layout_specs": {
+    "container": "Flex container to center the app on desktop. App itself must be a mobile frame: max-w-[430px] w-full h-[932px] max-h-[100vh] relative overflow-hidden rounded-[3rem] border-[8px] border-zinc-900 shadow-[0_0_100px_rgba(57,255,20,0.1)] bg-[#0A0A0A].",
+    "padding": "General screen padding: p-6. Bottom padding: pb-24 (to account for bottom nav).",
+    "glassmorphism": "backdrop-blur-2xl bg-[#141414]/60 border border-white/5 shadow-xl"
+  },
+  "components": {
+    "SplashScreen": {
+      "description": "Full screen overlay with a glowing neon green 'S' or crosshair logo built with SVG.",
+      "animation": "Pulse animation on the logo, then fade-out and slide-up of the whole screen after 2.5 seconds."
+    },
+    "Onboarding": {
+      "description": "4 swipeable (or next-button driven) slides.",
+      "slides": [
+        "1. Welcome to SubScrub - The Subscription Sniper",
+        "2. Identify the Leaks - We find subscriptions draining your wallet",
+        "3. One-Tap Cancel - Generate legally binding cancellation letters",
+        "4. Take Control - Let's scan your accounts"
+      ],
+      "ui": "Large kinetic typography (Outfit 800), neon green progress dots, massive 'START SCAN' primary button on the last slide."
+    },
+    "ScanProgress": {
+      "description": "A dramatic scanning screen shown after onboarding.",
+      "ui": "A sweeping radar or vertical scanning line animation over a dark grid. Random company names flash on screen quickly. Takes 3 seconds, then transitions to Dashboard."
+    },
+    "Dashboard": {
+      "hero": "Massive typography showing 'Total Monthly Waste: $124.97'. The number should have a text-shadow/glow effect in red (#FF3366) transitioning to green.",
+      "cards": "List of 'Leaking' and 'Active' subscriptions. Use glassmorphism cards.",
+      "leak_card": "Subscriptions marked as leaks MUST have an animated gradient border (red to orange) and a glowing red warning icon."
+    },
+    "SubscriptionList": {
+      "data": [
+        {"name": "Netflix", "cost": "$15.99", "leak": false, "icon": "monitor-play"},
+        {"name": "Spotify", "cost": "$9.99", "leak": false, "icon": "headphones"},
+        {"name": "Adobe Creative Cloud", "cost": "$54.99", "leak": true, "icon": "paint-brush"},
+        {"name": "ChatGPT Plus", "cost": "$20.00", "leak": false, "icon": "robot"},
+        {"name": "Microsoft 365", "cost": "$9.99", "leak": false, "icon": "windows-logo"},
+        {"name": "Disney+", "cost": "$13.99", "leak": false, "icon": "film-strip"},
+        {"name": "iCloud+", "cost": "$2.99", "leak": false, "icon": "cloud"},
+        {"name": "NordVPN", "cost": "$11.99", "leak": true, "icon": "shield-check"},
+        {"name": "GitHub Pro", "cost": "$4.00", "leak": false, "icon": "code"},
+        {"name": "Notion", "cost": "$8.00", "leak": false, "icon": "notebook"},
+        {"name": "Hulu", "cost": "$17.99", "leak": true, "icon": "television"},
+        {"name": "Zyxw Technologies", "cost": "$29.99", "leak": true, "icon": "cpu"}
+      ]
+    },
+    "SubscriptionDetail": {
+      "description": "Slide-in panel when a subscription is clicked.",
+      "ui": "Shows large cost breakdown, 'Months Subscribed', and a massive neon green 'SNIPE SUBSCRIPTION' button.",
+      "cancel_letter": "Clicking 'Snipe' generates a formal cancellation letter template inside a text area based on the chosen jurisdiction (Settings)."
+    },
+    "Settings": {
+      "ui": "Jurisdiction picker for the cancellation letters: KVKK (Turkey), GDPR (Europe), Generic (US/Global). Simple toggle/radio UI."
+    },
+    "BottomNav": {
+      "ui": "Fixed at the bottom of the mobile frame. Glassmorphism background. 3 icons: Dashboard (House), All Subs (List), Settings (Gear). Highlight active tab in neon green."
+    }
+  },
+  "interactions_and_animations": {
+    "buttons": "All buttons must have a hover/active state (scale down to 0.95) and a glowing box-shadow.",
+    "screen_transitions": "Use simple CSS classes (.screen-enter, .screen-exit) for smooth crossfades and subtle Y-axis translations between Dashboard, Detail, and Settings.",
+    "leak_border": "Use a CSS conic-gradient animation via @keyframes for the leaking subscription cards to simulate a moving neon border."
+  },
+  "testing": {
+    "requirements": "All interactive elements (buttons, nav items, cards) MUST include a `data-testid` attribute (e.g., `data-testid=\"nav-settings\"`, `data-testid=\"sub-card-netflix\"`)."
+  },
+  "instructions_to_main_agent": [
+    "1. Create a single `index.html` file.",
+    "2. Inject Tailwind via CDN `<script src=\"https://cdn.tailwindcss.com\"></script>` and configure the custom colors in `tailwind.config` inside the script.",
+    "3. Use standard CSS within `<style>` for custom animations (radar scan, glowing borders, screen transitions).",
+    "4. Use Vanilla JavaScript within `<script>` to handle DOM manipulation, screen switching, and the cancellation letter logic.",
+    "5. Hardcode all the demo data exactly as specified.",
+    "6. Build a beautiful, centered mobile frame on desktop, resembling a premium iPhone app.",
+    "7. Do NOT use React or build tools. Strictly single HTML."
+  ]
+}
