@@ -659,6 +659,102 @@ body {
 
 /* ── Icons (SVG inline helpers) ──────────────────────────────────────────── */
 .icon { display: inline-block; width: 20px; height: 20px; vertical-align: middle; }
+
+/* ── CONNECT SOURCE SCREEN ───────────────────────────────────────────────── */
+#connect { background: var(--base); }
+.connect-topbar { padding: 56px 24px 8px; flex-shrink: 0; }
+.connect-page-title { font-family: var(--font-head); font-size: 28px; font-weight: 800; }
+.connect-page-sub { font-size: 13px; color: var(--text2); margin-top: 6px; line-height: 1.6; }
+.connect-body { padding: 20px 24px 40px; }
+.connect-section-title { font-size: 10px; letter-spacing: 3px; color: var(--text3); font-weight: 700; margin-bottom: 12px; margin-top: 24px; }
+
+/* Method Cards */
+.method-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 20px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.method-card:hover { border-color: rgba(57,255,20,0.3); background: rgba(57,255,20,0.03); }
+.method-card:active { transform: scale(0.99); }
+.method-card.highlight { border-color: rgba(57,255,20,0.35); background: var(--green-dim); }
+.method-card.soon { opacity: 0.6; cursor: default; }
+.method-card.soon:hover { border-color: var(--border); background: var(--surface); }
+.method-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.method-left { display: flex; align-items: center; gap: 14px; }
+.method-icon {
+  width: 46px; height: 46px; border-radius: 14px;
+  background: var(--green-dim); border: 1px solid rgba(57,255,20,0.2);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.method-icon.red-icon { background: var(--red-dim); border-color: rgba(255,51,102,0.2); }
+.method-icon.blue-icon { background: rgba(59,130,246,0.1); border-color: rgba(59,130,246,0.2); }
+.method-icon.purple-icon { background: rgba(139,92,246,0.1); border-color: rgba(139,92,246,0.2); }
+.method-name { font-family: var(--font-head); font-size: 16px; font-weight: 700; }
+.method-desc { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.method-badge {
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  padding: 4px 10px; border-radius: 100px;
+}
+.badge-free { background: var(--green-dim); color: var(--green); border: 1px solid rgba(57,255,20,0.25); }
+.badge-soon { background: var(--surface2); color: var(--text3); border: 1px solid var(--border); }
+.method-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.method-tag {
+  font-size: 10px; padding: 3px 8px; border-radius: 6px;
+  background: var(--surface2); color: var(--text3); border: 1px solid var(--border);
+}
+
+/* CSV Drop Zone */
+#csv-dropzone {
+  display: none; margin-top: 16px;
+  border: 1.5px dashed rgba(57,255,20,0.3);
+  border-radius: var(--r);
+  padding: 28px 20px;
+  text-align: center;
+  transition: all 0.2s;
+  cursor: pointer;
+  background: rgba(57,255,20,0.02);
+}
+#csv-dropzone.drag-over { border-color: var(--green); background: var(--green-dim); }
+#csv-dropzone.has-file { border-color: var(--green); background: var(--green-dim); border-style: solid; }
+.dropzone-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+.dropzone-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.dropzone-sub { font-size: 11px; color: var(--text2); }
+.dropzone-formats { font-size: 10px; color: var(--text3); margin-top: 8px; }
+#file-input { display: none; }
+
+/* CSV Preview */
+#csv-preview {
+  display: none; margin-top: 16px;
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 16px;
+}
+.csv-preview-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 6px; }
+.csv-preview-row:last-child { margin-bottom: 0; }
+.csv-preview-label { color: var(--text2); }
+.csv-preview-val { font-weight: 600; color: var(--green); }
+
+/* Demo data option */
+.demo-separator { display: flex; align-items: center; gap: 12px; margin: 20px 0 0; }
+.demo-line { flex: 1; height: 1px; background: var(--border); }
+.demo-or { font-size: 11px; color: var(--text3); font-weight: 600; letter-spacing: 1px; }
+.demo-btn {
+  width: 100%; padding: 14px;
+  background: transparent; border: 1px solid var(--border);
+  border-radius: var(--r); color: var(--text2);
+  font-family: var(--font-body); font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; margin-top: 12px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.demo-btn:hover { border-color: rgba(57,255,20,0.3); color: var(--green); }
+
+/* CSV Analyze Button */
+#csv-analyze-btn { display: none; margin-top: 14px; }
 </style>
 </head>
 <body>
@@ -734,6 +830,137 @@ body {
         <div class="onb-dot" id="dot3"></div>
       </div>
       <button class="btn-primary" style="width:auto;padding:14px 28px;font-size:13px" id="onb-btn" onclick="onbNext()" data-testid="onboarding-next-btn">Next</button>
+    </div>
+  </div>
+
+  <!-- ── CONNECT SOURCE ────────────────────────────────────────────────── -->
+  <div id="connect" class="screen" data-testid="connect-screen">
+    <div class="connect-topbar">
+      <div class="connect-page-title">Connect Your Data</div>
+      <div class="connect-page-sub">Choose how to import your transactions. All processing happens on-device.</div>
+    </div>
+    <div class="scroll-area">
+      <div class="connect-body">
+
+        <!-- METHOD A: CSV Upload -->
+        <div class="connect-section-title">RECOMMENDED · WORKS EVERYWHERE</div>
+        <div class="method-card highlight" id="card-csv" onclick="toggleCSV()" data-testid="method-csv">
+          <div class="method-header">
+            <div class="method-left">
+              <div class="method-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              </div>
+              <div>
+                <div class="method-name">Bank Statement CSV</div>
+                <div class="method-desc">Upload your bank export file</div>
+              </div>
+            </div>
+            <div class="method-badge badge-free">FREE</div>
+          </div>
+          <div class="method-tags">
+            <span class="method-tag">Chase</span><span class="method-tag">HSBC</span>
+            <span class="method-tag">Garanti</span><span class="method-tag">İşbank</span>
+            <span class="method-tag">Revolut</span><span class="method-tag">N26</span>
+            <span class="method-tag">ING</span><span class="method-tag">+ any bank</span>
+          </div>
+
+          <!-- Drop Zone (shown when card is expanded) -->
+          <div id="csv-dropzone" onclick="document.getElementById('file-input').click()">
+            <span class="dropzone-icon">📂</span>
+            <div class="dropzone-title" id="dz-title">Click to upload or drag & drop</div>
+            <div class="dropzone-sub" id="dz-sub">Your bank statement export file</div>
+            <div class="dropzone-formats">CSV · TXT · TSV · XLSX (saved as CSV)</div>
+          </div>
+          <input type="file" id="file-input" accept=".csv,.txt,.tsv" onchange="handleFileSelect(event)"/>
+
+          <!-- CSV Preview after file selected -->
+          <div id="csv-preview">
+            <div class="csv-preview-row">
+              <span class="csv-preview-label">File</span>
+              <span class="csv-preview-val" id="csv-filename"></span>
+            </div>
+            <div class="csv-preview-row">
+              <span class="csv-preview-label">Transactions found</span>
+              <span class="csv-preview-val" id="csv-tx-count"></span>
+            </div>
+            <div class="csv-preview-row">
+              <span class="csv-preview-label">Date column</span>
+              <span class="csv-preview-val" id="csv-date-col"></span>
+            </div>
+            <div class="csv-preview-row">
+              <span class="csv-preview-label">Description column</span>
+              <span class="csv-preview-val" id="csv-desc-col"></span>
+            </div>
+            <div class="csv-preview-row">
+              <span class="csv-preview-label">Amount column</span>
+              <span class="csv-preview-val" id="csv-amount-col"></span>
+            </div>
+          </div>
+
+          <!-- Analyze button -->
+          <button class="btn-primary" id="csv-analyze-btn" onclick="analyzeCSV()" data-testid="csv-analyze-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            Analyze Transactions
+          </button>
+        </div>
+
+        <!-- METHOD B: Email Scan -->
+        <div class="connect-section-title">RECEIPT-BASED · GLOBAL</div>
+        <div class="method-card soon" data-testid="method-email">
+          <div class="method-header">
+            <div class="method-left">
+              <div class="method-icon red-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FF3366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <div>
+                <div class="method-name">Email Scan</div>
+                <div class="method-desc">Scan Gmail or Outlook receipts</div>
+              </div>
+            </div>
+            <div class="method-badge badge-soon">COMING SOON</div>
+          </div>
+          <div class="method-tags">
+            <span class="method-tag">Gmail</span><span class="method-tag">Outlook</span>
+            <span class="method-tag">Works worldwide</span><span class="method-tag">No bank needed</span>
+          </div>
+        </div>
+
+        <!-- METHOD C: Bank Connect -->
+        <div class="connect-section-title">REAL-TIME · AUTOMATIC</div>
+        <div class="method-card soon" data-testid="method-bank">
+          <div class="method-header">
+            <div class="method-left">
+              <div class="method-icon blue-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+              </div>
+              <div>
+                <div class="method-name">Direct Bank Connect</div>
+                <div class="method-desc">OAuth — your password stays with your bank</div>
+              </div>
+            </div>
+            <div class="method-badge badge-soon">COMING SOON</div>
+          </div>
+          <div class="method-tags">
+            <span class="method-tag">🇺🇸 Plaid</span>
+            <span class="method-tag">🇹🇷 BDDK</span>
+            <span class="method-tag">🇪🇺 TrueLayer</span>
+            <span class="method-tag">🇸🇦 Lean</span>
+            <span class="method-tag">🌏 Salt Edge</span>
+          </div>
+        </div>
+
+        <!-- Demo fallback -->
+        <div class="demo-separator">
+          <div class="demo-line"></div>
+          <div class="demo-or">OR</div>
+          <div class="demo-line"></div>
+        </div>
+        <button class="demo-btn" onclick="useDemoData()" data-testid="use-demo-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          Try with Demo Data
+        </button>
+
+      </div>
     </div>
   </div>
 
@@ -958,7 +1185,12 @@ body {
 const ICONS = {
   netflix: '🎬', spotify: '🎵', adobe: '🎨', chatgpt: '🤖',
   microsoft: '💼', disney: '🏰', icloud: '☁️', nordvpn: '🛡️',
-  github: '</>', notion: '📝', hulu: '📺', zyxw: '⚙️'
+  github: '</>', notion: '📝', hulu: '📺', zyxw: '⚙️',
+  amazonprime: '📦', applemusic: '🎵', youtubepremium: '▶️',
+  dropbox: '💾', googledrive: '💾', slack: '💬', zoom: '📹',
+  figma: '🖌️', canva: '🎨', '1password': '🔑', lastpass: '🔑',
+  tidal: '🎵', deezer: '🎵', midjourney: '🖼️', claude: '🤖',
+  linear: '📋', vercel: '▲', peloton: '🚴', strava: '🏃',
 };
 
 const SUBS = [
@@ -1026,26 +1258,251 @@ function onbNext(){
     onbSlide++;
     document.getElementById('onb-track').style.transform = `translateX(-${onbSlide*100}%)`;
     document.querySelectorAll('.onb-dot').forEach((d,i)=>d.classList.toggle('active', i===onbSlide));
-    if(onbSlide===3) document.getElementById('onb-btn').textContent = 'Start Scan';
+    if(onbSlide===3) document.getElementById('onb-btn').textContent = 'Get Started';
   } else {
-    startScan();
+    showScreen('connect');
   }
 }
 
-// ── Scan ───────────────────────────────────────────────────────────────────
-const STAGES = [
-  [0,'Connecting to sources...'],
-  [12,'Fetching bank transactions...'],
-  [28,'Scanning email receipts...'],
-  [45,'Analyzing patterns...'],
-  [62,'Detecting subscriptions...'],
-  [78,'Calculating costs...'],
-  [92,'Building your list...'],
-  [100,'Done!'],
-];
+// ── Connect Source ─────────────────────────────────────────────────────────
+let csvExpanded = false;
+let parsedTransactions = [];
 
-function startScan(){
+function toggleCSV(){
+  csvExpanded = !csvExpanded;
+  const dz = document.getElementById('csv-dropzone');
+  dz.style.display = csvExpanded ? 'block' : 'none';
+}
+
+function handleFileSelect(event){
+  const file = event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => processCSVContent(e.target.result, file.name);
+  reader.readAsText(file);
+}
+
+function processCSVContent(content, filename){
+  const result = parseCSV(content);
+  parsedTransactions = result.transactions;
+  if(parsedTransactions.length === 0){
+    alert('Could not parse this file. Please ensure it is a CSV with Date, Description, and Amount columns.');
+    return;
+  }
+  document.getElementById('csv-filename').textContent = filename;
+  document.getElementById('csv-tx-count').textContent = parsedTransactions.length + ' rows';
+  document.getElementById('csv-date-col').textContent = result.dateCol || 'Auto-detected';
+  document.getElementById('csv-desc-col').textContent = result.descCol || 'Auto-detected';
+  document.getElementById('csv-amount-col').textContent = result.amtCol || 'Auto-detected';
+  const dz = document.getElementById('csv-dropzone');
+  dz.classList.add('has-file');
+  document.getElementById('dz-title').textContent = 'File loaded — ready to analyze';
+  document.getElementById('dz-sub').textContent = parsedTransactions.length + ' transactions found';
+  document.getElementById('csv-preview').style.display = 'block';
+  document.getElementById('csv-analyze-btn').style.display = 'block';
+}
+
+// ── CSV Parser ─────────────────────────────────────────────────────────────
+function parseCSV(content){
+  const lines = content.split(/\r?\n/).filter(l => l.trim());
+  if(lines.length < 2) return {transactions:[], dateCol:'', descCol:'', amtCol:''};
+
+  // Detect separator
+  const sep = detectSeparator(lines[0]);
+  const headers = lines[0].split(sep).map(h => h.replace(/['"]/g,'').trim().toLowerCase());
+
+  // Detect columns
+  const dateIdx  = findCol(headers, ['date','transaction date','posted date','booking date','value date','işlem tarihi','tarih']);
+  const descIdx  = findCol(headers, ['description','merchant','name','narration','details','memo','transaction','reference','açıklama','işlem']);
+  const amtIdx   = findCol(headers, ['amount','debit','credit','value','sum','price','tutar','miktar']);
+
+  if(descIdx === -1) return {transactions:[], dateCol:'', descCol:'', amtCol:''};
+
+  const transactions = [];
+  for(let i = 1; i < lines.length; i++){
+    const cols = splitCSVLine(lines[i], sep);
+    if(cols.length <= descIdx) continue;
+    const desc = cols[descIdx]?.replace(/['"]/g,'').trim();
+    if(!desc) continue;
+    const rawAmt = amtIdx > -1 ? cols[amtIdx]?.replace(/['"$€£₺,\s]/g,'').trim() : '0';
+    const amount = Math.abs(parseFloat(rawAmt) || 0);
+    const date   = dateIdx > -1 ? cols[dateIdx]?.replace(/['"]/g,'').trim() : '';
+    transactions.push({date, description: desc, amount});
+  }
+
+  return {
+    transactions,
+    dateCol:  dateIdx  > -1 ? headers[dateIdx]  : 'Not found',
+    descCol:  descIdx  > -1 ? headers[descIdx]  : 'Not found',
+    amtCol:   amtIdx   > -1 ? headers[amtIdx]   : 'Not found',
+  };
+}
+
+function detectSeparator(line){
+  const counts = {',': 0, ';': 0, '\t': 0};
+  for(const ch of line) if(ch in counts) counts[ch]++;
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1])[0][0];
+}
+
+function findCol(headers, candidates){
+  for(const c of candidates){
+    const i = headers.findIndex(h => h.includes(c));
+    if(i > -1) return i;
+  }
+  return -1;
+}
+
+function splitCSVLine(line, sep){
+  const result = []; let cur = ''; let inQ = false;
+  for(const ch of line){
+    if(ch === '"') { inQ = !inQ; continue; }
+    if(ch === sep && !inQ) { result.push(cur); cur = ''; continue; }
+    cur += ch;
+  }
+  result.push(cur);
+  return result;
+}
+
+// ── Known Services Detection Engine ───────────────────────────────────────
+const KNOWN_SERVICES = {
+  // Streaming / Entertainment
+  netflix:{name:'Netflix',category:'Entertainment',monthly:15.99},
+  spotify:{name:'Spotify',category:'Entertainment',monthly:9.99},
+  'apple music':{name:'Apple Music',category:'Entertainment',monthly:10.99},
+  'youtube premium':{name:'YouTube Premium',category:'Entertainment',monthly:13.99},
+  'youtube music':{name:'YouTube Music',category:'Entertainment',monthly:10.99},
+  'disney+':{name:'Disney+',category:'Entertainment',monthly:13.99},
+  'disney plus':{name:'Disney+',category:'Entertainment',monthly:13.99},
+  hulu:{name:'Hulu',category:'Entertainment',monthly:17.99},
+  'amazon prime':{name:'Amazon Prime',category:'Entertainment',monthly:14.99},
+  'hbo max':{name:'HBO Max',category:'Entertainment',monthly:15.99},
+  'max.com':{name:'Max',category:'Entertainment',monthly:15.99},
+  peacock:{name:'Peacock',category:'Entertainment',monthly:7.99},
+  paramount:{name:'Paramount+',category:'Entertainment',monthly:5.99},
+  twitch:{name:'Twitch',category:'Entertainment',monthly:4.99},
+  // Music
+  'apple one':{name:'Apple One',category:'Entertainment',monthly:21.95},
+  deezer:{name:'Deezer',category:'Music',monthly:9.99},
+  tidal:{name:'Tidal',category:'Music',monthly:9.99},
+  // Productivity / Software
+  'adobe':{name:'Adobe CC',category:'Software',monthly:54.99},
+  'microsoft 365':{name:'Microsoft 365',category:'Software',monthly:9.99},
+  'office 365':{name:'Microsoft 365',category:'Software',monthly:9.99},
+  notion:{name:'Notion',category:'Productivity',monthly:8.00},
+  'monday.com':{name:'Monday.com',category:'Productivity',monthly:9.00},
+  asana:{name:'Asana',category:'Productivity',monthly:10.99},
+  slack:{name:'Slack',category:'Productivity',monthly:7.25},
+  zoom:{name:'Zoom',category:'Communication',monthly:14.99},
+  figma:{name:'Figma',category:'Design',monthly:12.00},
+  canva:{name:'Canva',category:'Design',monthly:12.99},
+  // Cloud / Storage
+  dropbox:{name:'Dropbox',category:'Storage',monthly:9.99},
+  'google one':{name:'Google One',category:'Storage',monthly:2.99},
+  icloud:{name:'iCloud+',category:'Storage',monthly:2.99},
+  'onedrive':{name:'OneDrive',category:'Storage',monthly:1.99},
+  // Dev tools
+  github:{name:'GitHub Pro',category:'Developer',monthly:4.00},
+  vercel:{name:'Vercel Pro',category:'Developer',monthly:20.00},
+  'heroku':{name:'Heroku',category:'Developer',monthly:7.00},
+  'linear':{name:'Linear',category:'Developer',monthly:8.00},
+  // Security / VPN
+  nordvpn:{name:'NordVPN',category:'Security',monthly:11.99},
+  expressvpn:{name:'ExpressVPN',category:'Security',monthly:12.95},
+  '1password':{name:'1Password',category:'Security',monthly:2.99},
+  lastpass:{name:'LastPass',category:'Security',monthly:3.00},
+  // AI
+  chatgpt:{name:'ChatGPT Plus',category:'AI',monthly:20.00},
+  openai:{name:'OpenAI',category:'AI',monthly:20.00},
+  claude:{name:'Claude Pro',category:'AI',monthly:20.00},
+  midjourney:{name:'Midjourney',category:'AI',monthly:10.00},
+  // News
+  'new york times':{name:'NYT',category:'News',monthly:4.00},
+  'wall street journal':{name:'WSJ',category:'News',monthly:9.99},
+  // Fitness
+  peloton:{name:'Peloton',category:'Fitness',monthly:44.00},
+  strava:{name:'Strava',category:'Fitness',monthly:5.99},
+  'apple fitness':{name:'Apple Fitness+',category:'Fitness',monthly:9.99},
+};
+
+function detectSubscriptionsFromTransactions(txs){
+  const found = {};
+  txs.forEach(tx => {
+    const desc = tx.description.toLowerCase();
+    for(const [key, svc] of Object.entries(KNOWN_SERVICES)){
+      if(desc.includes(key)){
+        const existingKey = svc.name;
+        if(!found[existingKey]){
+          found[existingKey] = {
+            id: 's_' + Object.keys(found).length,
+            name: svc.name,
+            key: key.replace(/[^a-z0-9]/g,''),
+            amount: tx.amount > 0 ? tx.amount : svc.monthly,
+            currency: 'USD',
+            freq: 'Monthly',
+            status: 'potential_leak',   // start as potential — confirmed when seen 2+ times
+            confidence: 0.72,
+            category: svc.category,
+            source: 'CSV Import',
+            cancellationLink: null,
+            occurrences: 1,
+          };
+        } else {
+          found[existingKey].occurrences++;
+          if(found[existingKey].occurrences >= 2){
+            found[existingKey].status = 'active';
+            found[existingKey].confidence = 0.97;
+          } else {
+            found[existingKey].confidence = 0.82;
+          }
+        }
+        break;
+      }
+    }
+  });
+  return Object.values(found);
+}
+
+function analyzeCSV(){
+  if(parsedTransactions.length === 0) return;
+  const detected = detectSubscriptionsFromTransactions(parsedTransactions);
+  if(detected.length > 0){
+    SUBS.length = 0;
+    detected.forEach((s,i) => { s.id = 's'+i; SUBS.push(s); });
+  }
+  startScanWithMode('csv', parsedTransactions.length);
+}
+
+function useDemoData(){
+  // Reset to original demo data if needed, then scan
+  startScanWithMode('demo', 0);
+}
+
+// ── Scan ───────────────────────────────────────────────────────────────────
+function startScan(){ startScanWithMode('demo', 0); }
+function startScanWithMode(mode, txCount){
   showScreen('scan');
+  const isCSV = mode === 'csv';
+  const STAGES_CSV = [
+    [0,'Loading CSV data...'],
+    [15,'Parsing ' + txCount + ' transactions...'],
+    [35,'Normalizing merchant names...'],
+    [55,'Matching known services...'],
+    [72,'Detecting recurring patterns...'],
+    [88,'Calculating costs...'],
+    [100,'Analysis complete!'],
+  ];
+  const STAGES_DEMO = [
+    [0,'Connecting to sources...'],
+    [12,'Fetching bank transactions...'],
+    [28,'Scanning email receipts...'],
+    [45,'Analyzing patterns...'],
+    [62,'Detecting subscriptions...'],
+    [78,'Calculating costs...'],
+    [92,'Building your list...'],
+    [100,'Done!'],
+  ];
+  const STAGES = isCSV ? STAGES_CSV : STAGES_DEMO;
+
   let si = 0;
   let flashIdx = 0;
   const flashEl = document.getElementById('scan-flash');
@@ -1086,8 +1543,24 @@ function buildDashboard(){
   document.getElementById('hero-count').textContent = leaks;
   document.getElementById('hero-annual').textContent = fmt(waste*12);
   document.getElementById('m-count').textContent = SUBS.length;
-  document.getElementById('m-monthly').textContent = fmt(total).replace('US','');
-  document.getElementById('m-annual').textContent = fmt(total*12).replace('US','');
+  document.getElementById('m-monthly').textContent = fmt(total);
+  document.getElementById('m-annual').textContent = fmt(total*12);
+
+  // Update top-bar pill
+  const pill = document.querySelector('.demo-pill');
+  if(pill){
+    if(parsedTransactions.length > 0){
+      pill.textContent = 'CSV IMPORT';
+      pill.style.background = 'rgba(57,255,20,0.12)';
+      pill.style.borderColor = 'rgba(57,255,20,0.3)';
+      pill.style.color = '#39FF14';
+    } else {
+      pill.textContent = 'DEMO';
+      pill.style.background = '';
+      pill.style.borderColor = '';
+      pill.style.color = '';
+    }
+  }
 
   const sorted = [...SUBS].sort((a,b)=>{
     if(a.status==='potential_leak' && b.status!=='potential_leak') return -1;
