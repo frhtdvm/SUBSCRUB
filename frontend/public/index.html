@@ -1,431 +1,1211 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SubScrub — Subscription Sniper</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>SubScrub — The Subscription Sniper</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#000;--card:#0f0f0f;--card2:#141414;--border:#1c1c1c;
-  --primary:#00ff87;--primary-dim:rgba(0,255,135,0.12);--primary-glow:rgba(0,255,135,0.25);
-  --warning:#ff6b35;--warn-dim:rgba(255,107,53,0.12);
-  --cancelled:#555;--text:#e8e8e8;--muted:#666;--dim:#333;
-  --font:'Courier New',monospace;
-  --radius:6px;
+/* ── Reset & Variables ───────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --base: #0A0A0A;
+  --surface: #141414;
+  --surface2: #1A1A1A;
+  --border: rgba(255,255,255,0.07);
+  --border-light: rgba(255,255,255,0.12);
+  --green: #39FF14;
+  --green-dim: rgba(57,255,20,0.12);
+  --green-glow: rgba(57,255,20,0.35);
+  --green-glow2: rgba(57,255,20,0.08);
+  --red: #FF3366;
+  --red-dim: rgba(255,51,102,0.12);
+  --red-glow: rgba(255,51,102,0.35);
+  --text: #FFFFFF;
+  --text2: #A1A1AA;
+  --text3: #52525B;
+  --font-head: 'Outfit', sans-serif;
+  --font-body: 'Manrope', sans-serif;
+  --r: 16px;
+  --r-sm: 10px;
 }
-body{background:var(--bg);color:var(--text);font-family:var(--font);min-height:100vh;overflow-x:hidden}
 
-/* ── Layout ── */
-.app{display:flex;flex-direction:column;height:100vh;max-width:480px;margin:0 auto;position:relative;border-left:1px solid var(--border);border-right:1px solid var(--border)}
-.screen{flex:1;overflow-y:auto;display:none;flex-direction:column}
-.screen.active{display:flex}
+body {
+  background: #050505;
+  font-family: var(--font-body);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-image: radial-gradient(ellipse at 20% 50%, rgba(57,255,20,0.03) 0%, transparent 50%),
+                    radial-gradient(ellipse at 80% 20%, rgba(255,51,102,0.03) 0%, transparent 50%);
+}
 
-/* ── Splash ── */
-#splash{align-items:center;justify-content:center;background:var(--bg)}
-.splash-title{font-size:52px;font-weight:700;color:var(--primary);letter-spacing:2px;text-shadow:0 0 40px var(--primary-glow);animation:glow 2s ease-in-out infinite alternate}
-.splash-sub{color:var(--muted);font-size:11px;letter-spacing:4px;margin-top:10px}
-.splash-footer{position:absolute;bottom:40px;color:var(--dim);font-size:9px;letter-spacing:2px}
-@keyframes glow{from{text-shadow:0 0 20px var(--primary-glow)}to{text-shadow:0 0 60px var(--primary),0 0 100px var(--primary-glow)}}
+/* ── Phone Frame ─────────────────────────────────────────────────────────── */
+#phone {
+  width: 100%;
+  max-width: 393px;
+  height: 100vh;
+  max-height: 852px;
+  position: relative;
+  overflow: hidden;
+  background: var(--base);
+  box-shadow: 0 0 0 8px #111, 0 0 0 10px #1a1a1a, 0 0 80px rgba(57,255,20,0.08), 0 40px 120px rgba(0,0,0,0.8);
+  border-radius: 44px;
+}
 
-/* ── Onboarding ── */
-#onboarding{padding:0}
-.onb-slides{display:flex;width:400%;transition:transform .4s cubic-bezier(.4,0,.2,1)}
-.onb-slide{width:25%;min-height:100%;padding:60px 32px 120px;display:flex;flex-direction:column;justify-content:center}
-.onb-icon{font-size:48px;margin-bottom:28px}
-.onb-title{font-size:26px;font-weight:700;color:var(--primary);margin-bottom:16px;line-height:1.2}
-.onb-desc{font-size:13px;color:var(--muted);line-height:1.8}
-.onb-footer{position:absolute;bottom:0;left:0;right:0;padding:24px 32px;background:var(--bg);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.dots{display:flex;gap:8px}
-.dot{width:6px;height:6px;border-radius:50%;background:var(--dim);transition:all .3s}
-.dot.active{background:var(--primary);width:20px;border-radius:3px}
+@media (max-width: 430px) {
+  #phone { border-radius: 0; box-shadow: none; max-height: 100vh; }
+}
 
-/* ── Scan ── */
-#scan{align-items:center;justify-content:center;padding:40px}
-.spinner{width:72px;height:72px;border:3px solid var(--border);border-top:3px solid var(--primary);border-radius:50%;animation:spin 0.9s linear infinite;box-shadow:0 0 20px var(--primary-glow);margin-bottom:32px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.scan-title{font-size:20px;font-weight:700;color:var(--primary);margin-bottom:8px}
-.scan-stage{font-size:11px;color:var(--muted);margin-bottom:32px;text-align:center;min-height:16px}
-.progress-bar{width:100%;height:5px;background:var(--card2);border-radius:3px;overflow:hidden;margin-bottom:10px}
-.progress-fill{height:100%;background:var(--primary);border-radius:3px;transition:width .4s ease;box-shadow:0 0 8px var(--primary-glow)}
-.progress-pct{font-size:11px;color:var(--dim)}
-.scan-note{position:absolute;bottom:40px;font-size:9px;color:var(--dim);text-align:center;letter-spacing:1px;line-height:1.8}
+/* ── Screens ─────────────────────────────────────────────────────────────── */
+.screen {
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  transform: translateY(12px);
+  overflow: hidden;
+}
+.screen.active {
+  opacity: 1; pointer-events: all;
+  transform: translateY(0);
+}
+.scroll-area {
+  flex: 1; overflow-y: auto; overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll-area::-webkit-scrollbar { width: 0; }
 
-/* ── Dashboard ── */
-#dashboard{padding:24px}
-.dash-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
-.dash-title{font-size:22px;font-weight:700;color:var(--primary)}
-.demo-badge{background:rgba(255,215,0,.15);border:1px solid rgba(255,215,0,.3);color:#ffd700;font-size:9px;letter-spacing:1px;padding:2px 8px;border-radius:2px}
-.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
-.metric{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px}
-.metric.primary{border-color:rgba(0,255,135,.25);background:var(--primary-dim)}
-.metric-label{font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:6px}
-.metric-value{font-size:22px;font-weight:700;color:var(--text)}
-.metric.primary .metric-value{color:var(--primary)}
-.metric-sub{font-size:9px;color:var(--muted);margin-top:3px}
-.section-label{font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:12px}
-.sub-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px;cursor:pointer;transition:border-color .2s,background .2s;display:flex;justify-content:space-between;align-items:center}
-.sub-card:hover{border-color:var(--primary);background:var(--primary-dim)}
-.sub-card.leak{border-color:rgba(255,107,53,.25);background:var(--warn-dim)}
-.sub-card.leak:hover{border-color:var(--warning)}
-.sub-name{font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px}
-.sub-freq{font-size:10px;color:var(--muted);letter-spacing:1px}
-.sub-amount{font-size:16px;font-weight:700;color:var(--primary);text-align:right}
-.sub-amount.leak{color:var(--warning)}
-.sub-conf{font-size:9px;color:var(--muted);text-align:right;margin-top:2px}
-.tag{display:inline-block;padding:2px 6px;border-radius:2px;font-size:8px;letter-spacing:1px;font-weight:700;margin-left:6px}
-.tag.active{background:var(--primary-dim);color:var(--primary);border:1px solid rgba(0,255,135,.3)}
-.tag.leak{background:var(--warn-dim);color:var(--warning);border:1px solid rgba(255,107,53,.3)}
+/* ── Glassmorphism Card ──────────────────────────────────────────────────── */
+.glass {
+  background: rgba(20,20,20,0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+}
 
-/* ── Detail ── */
-#detail{padding:24px}
-.back-btn{font-size:12px;color:var(--primary);cursor:pointer;margin-bottom:24px;display:inline-block}
-.back-btn:hover{text-decoration:underline}
-.detail-name{font-size:26px;font-weight:700;color:var(--primary);margin-bottom:4px}
-.detail-badge{margin-bottom:24px}
-.cost-box{background:var(--primary-dim);border:1px solid rgba(0,255,135,.25);border-radius:var(--radius);padding:20px;text-align:center;margin-bottom:24px}
-.cost-box.leak{background:var(--warn-dim);border-color:rgba(255,107,53,.25)}
-.cost-label{font-size:9px;letter-spacing:3px;color:var(--muted);margin-bottom:6px}
-.cost-value{font-size:40px;font-weight:700;color:var(--primary)}
-.cost-box.leak .cost-value{color:var(--warning)}
-.info-table{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:24px}
-.info-row{display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);font-size:12px}
-.info-row:last-child{border-bottom:none}
-.info-key{color:var(--muted)}
-.info-val{color:var(--text)}
-.info-val.green{color:var(--primary)}
-.cancel-btn{width:100%;padding:14px;background:var(--primary);color:#000;border:none;border-radius:var(--radius);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;transition:opacity .2s}
-.cancel-btn:hover{opacity:.85}
-.cancel-btn.secondary{background:transparent;border:1px solid var(--border);color:var(--text);margin-top:8px}
-.cancel-btn.secondary:hover{border-color:var(--primary);color:var(--primary)}
+/* ── SPLASH ──────────────────────────────────────────────────────────────── */
+#splash {
+  background: var(--base);
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.splash-logo {
+  position: relative;
+  margin-bottom: 32px;
+}
+.splash-crosshair {
+  width: 96px; height: 96px;
+  position: relative;
+  animation: crosshair-spin 6s linear infinite;
+}
+.splash-crosshair svg {
+  width: 100%; height: 100%;
+  filter: drop-shadow(0 0 20px var(--green-glow));
+}
+@keyframes crosshair-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+.splash-ring {
+  position: absolute; inset: -20px;
+  border-radius: 50%;
+  border: 1px solid var(--green);
+  opacity: 0;
+  animation: ring-pulse 2s ease-out infinite;
+}
+.splash-ring:nth-child(2) { animation-delay: 0.6s; }
+.splash-ring:nth-child(3) { animation-delay: 1.2s; }
+@keyframes ring-pulse {
+  0% { transform: scale(0.5); opacity: 0.6; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+.splash-name {
+  font-family: var(--font-head);
+  font-size: 48px; font-weight: 900;
+  letter-spacing: -1px;
+  color: var(--green);
+  text-shadow: 0 0 40px var(--green-glow), 0 0 80px rgba(57,255,20,0.2);
+  animation: name-glow 2s ease-in-out infinite alternate;
+}
+@keyframes name-glow {
+  from { text-shadow: 0 0 30px var(--green-glow), 0 0 60px rgba(57,255,20,0.15); }
+  to   { text-shadow: 0 0 60px var(--green-glow), 0 0 120px rgba(57,255,20,0.3); }
+}
+.splash-tag {
+  font-family: var(--font-body);
+  font-size: 10px; font-weight: 600;
+  letter-spacing: 4px; color: var(--text3);
+  margin-top: 6px; text-align: center;
+}
+.splash-bar {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px; background: var(--green);
+  box-shadow: 0 0 12px var(--green-glow);
+  animation: load-bar 2.2s ease-out forwards;
+  transform-origin: left;
+  transform: scaleX(0);
+}
+@keyframes load-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.splash-footer {
+  position: absolute; bottom: 48px;
+  font-size: 9px; letter-spacing: 3px; color: var(--text3);
+  text-align: center;
+}
 
-/* ── Bottom nav ── */
-.bottom-nav{display:flex;border-top:1px solid var(--border);background:var(--bg)}
-.nav-btn{flex:1;padding:12px 4px;text-align:center;cursor:pointer;transition:color .2s;border:none;background:none;color:var(--muted);font-family:var(--font);font-size:9px;letter-spacing:1px}
-.nav-btn.active{color:var(--primary)}
-.nav-btn .nav-icon{font-size:18px;display:block;margin-bottom:2px}
+/* ── ONBOARDING ──────────────────────────────────────────────────────────── */
+#onboarding { background: var(--base); }
+.onb-wrapper { flex: 1; position: relative; overflow: hidden; }
+.onb-track {
+  display: flex; height: 100%;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.onb-slide {
+  min-width: 100%; height: 100%;
+  padding: 60px 32px 32px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.onb-icon-wrap {
+  width: 88px; height: 88px;
+  border-radius: 28px;
+  background: var(--green-dim);
+  border: 1px solid rgba(57,255,20,0.2);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 32px;
+  box-shadow: 0 0 32px rgba(57,255,20,0.1);
+}
+.onb-icon-wrap svg { color: var(--green); }
+.onb-title {
+  font-family: var(--font-head);
+  font-size: 30px; font-weight: 800;
+  line-height: 1.15; letter-spacing: -0.5px;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+.onb-title span { color: var(--green); }
+.onb-desc {
+  font-size: 15px; line-height: 1.75;
+  color: var(--text2);
+}
+.onb-footer {
+  padding: 20px 24px 44px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid var(--border);
+  background: var(--base);
+}
+.onb-dots { display: flex; gap: 6px; }
+.onb-dot {
+  height: 4px; border-radius: 2px;
+  background: var(--text3);
+  transition: all 0.3s ease;
+  width: 16px;
+}
+.onb-dot.active { background: var(--green); width: 32px; box-shadow: 0 0 8px var(--green-glow); }
 
-/* ── Buttons ── */
-.btn{width:100%;padding:14px;background:var(--primary);color:#000;border:none;border-radius:var(--radius);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:1px;transition:opacity .2s;text-transform:uppercase}
-.btn:hover{opacity:.85}
-.btn.outline{background:transparent;border:1px solid var(--border);color:var(--text)}
-.btn.outline:hover{border-color:var(--primary);color:var(--primary)}
+/* ── SCAN ────────────────────────────────────────────────────────────────── */
+#scan {
+  background: var(--base);
+  align-items: center; justify-content: center;
+  gap: 0;
+}
+.scan-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(57,255,20,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(57,255,20,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+.radar-wrap {
+  position: relative; width: 220px; height: 220px;
+  margin-bottom: 40px; z-index: 1;
+}
+.radar-circle {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(57,255,20,0.15);
+  inset: 0;
+}
+.radar-circle:nth-child(2) { inset: 20%; }
+.radar-circle:nth-child(3) { inset: 40%; }
+.radar-circle:nth-child(4) { inset: 60%; }
+.radar-line {
+  position: absolute; top: 50%; left: 50%;
+  width: 50%; height: 2px;
+  transform-origin: left center;
+  background: linear-gradient(to right, transparent, var(--green));
+  animation: radar-sweep 2s linear infinite;
+  border-radius: 0 2px 2px 0;
+  box-shadow: 0 0 8px var(--green-glow);
+  z-index: 2;
+}
+@keyframes radar-sweep { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+.radar-dot {
+  position: absolute; width: 8px; height: 8px;
+  border-radius: 50%; background: var(--green);
+  box-shadow: 0 0 12px var(--green-glow);
+  animation: dot-blink 2s ease-in-out infinite;
+  transform: translate(-50%, -50%);
+}
+@keyframes dot-blink { 0%,100%{opacity:0} 50%{opacity:1} }
+.scan-title {
+  font-family: var(--font-head);
+  font-size: 22px; font-weight: 700;
+  color: var(--text); z-index: 1;
+  margin-bottom: 8px;
+}
+.scan-stage {
+  font-size: 13px; color: var(--text2);
+  letter-spacing: 0.5px; z-index: 1;
+  margin-bottom: 24px; text-align: center;
+  min-height: 20px;
+}
+.scan-bar-wrap {
+  width: 240px; height: 4px;
+  background: var(--surface2); border-radius: 2px;
+  overflow: hidden; z-index: 1;
+}
+.scan-bar-fill {
+  height: 100%; background: var(--green);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+  box-shadow: 0 0 10px var(--green-glow);
+}
+.scan-pct {
+  font-size: 11px; color: var(--text3);
+  margin-top: 8px; z-index: 1;
+  font-weight: 600; letter-spacing: 1px;
+}
+.scan-found {
+  position: absolute; bottom: 80px;
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--text3); z-index: 1;
+  text-align: center; line-height: 2;
+}
+.scan-flash {
+  color: var(--green); font-weight: 700;
+  opacity: 0;
+  transition: opacity 0.2s;
+  display: block; font-size: 12px;
+  letter-spacing: 2px;
+}
+.scan-flash.show { opacity: 1; }
 
-/* ── Settings ── */
-#settings{padding:24px}
-.settings-section{margin-bottom:24px}
-.settings-section-title{font-size:9px;letter-spacing:2px;color:var(--muted);margin-bottom:10px}
-.settings-list{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.settings-row{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--border);font-size:12px}
-.settings-row:last-child{border-bottom:none}
-.settings-key{color:var(--text)}
-.settings-val{color:var(--muted);font-size:11px}
+/* ── DASHBOARD ───────────────────────────────────────────────────────────── */
+#dashboard { background: var(--base); }
+.dash-topbar {
+  padding: 56px 24px 0;
+  display: flex; justify-content: space-between; align-items: center;
+  flex-shrink: 0;
+}
+.dash-topbar-title {
+  font-family: var(--font-head);
+  font-size: 28px; font-weight: 800;
+  letter-spacing: -0.5px;
+}
+.demo-pill {
+  background: rgba(255,215,0,0.1);
+  border: 1px solid rgba(255,215,0,0.25);
+  color: #FFD700;
+  font-size: 9px; font-weight: 700;
+  letter-spacing: 2px;
+  padding: 4px 10px;
+  border-radius: 100px;
+}
+.dash-hero {
+  padding: 28px 24px 0;
+  flex-shrink: 0;
+}
+.hero-label {
+  font-size: 11px; letter-spacing: 3px;
+  color: var(--text3); font-weight: 600;
+  margin-bottom: 6px;
+}
+.hero-amount {
+  font-family: var(--font-head);
+  font-size: 52px; font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  color: var(--red);
+  text-shadow: 0 0 40px rgba(255,51,102,0.4);
+}
+.hero-sub {
+  font-size: 13px; color: var(--text2);
+  margin-top: 6px;
+}
+.hero-sub span { color: var(--green); font-weight: 700; }
+.metric-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr;
+  gap: 10px; padding: 20px 24px 0; flex-shrink: 0;
+}
+.metric-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  padding: 14px 12px;
+}
+.metric-box.green-box { border-color: rgba(57,255,20,0.2); background: var(--green-dim); }
+.metric-lbl { font-size: 9px; letter-spacing: 2px; color: var(--text3); font-weight: 600; margin-bottom: 6px; }
+.metric-val { font-family: var(--font-head); font-size: 20px; font-weight: 800; }
+.metric-val.green { color: var(--green); }
+.metric-val.red { color: var(--red); }
+.section-hdr {
+  padding: 20px 24px 10px;
+  font-size: 10px; letter-spacing: 3px;
+  color: var(--text3); font-weight: 700;
+  flex-shrink: 0;
+}
+.sub-list { padding: 0 24px 24px; }
+
+/* ── Subscription Card ───────────────────────────────────────────────────── */
+.sub-card {
+  display: flex; align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  border-radius: var(--r);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.sub-card:hover, .sub-card:active {
+  border-color: rgba(57,255,20,0.25);
+  background: rgba(57,255,20,0.04);
+  transform: translateX(2px);
+}
+.sub-card.leak {
+  border-color: rgba(255,51,102,0.2);
+  background: rgba(255,51,102,0.05);
+}
+.sub-card.leak:hover {
+  border-color: rgba(255,51,102,0.4);
+  background: rgba(255,51,102,0.08);
+}
+.leak-border {
+  position: absolute; inset: 0;
+  border-radius: var(--r);
+  border: 1px solid transparent;
+  background: linear-gradient(var(--surface),var(--surface)) padding-box,
+    conic-gradient(from var(--angle), #FF3366, #FF6B35, #FF3366) border-box;
+  animation: border-spin 3s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+@property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+@keyframes border-spin { to { --angle: 360deg; } }
+.sub-icon {
+  width: 42px; height: 42px; flex-shrink: 0;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+}
+.sub-card.leak .sub-icon { background: rgba(255,51,102,0.1); border-color: rgba(255,51,102,0.2); }
+.sub-info { flex: 1; min-width: 0; }
+.sub-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+.sub-name { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.status-chip {
+  font-size: 8px; font-weight: 700; letter-spacing: 1px;
+  padding: 2px 7px; border-radius: 100px; flex-shrink: 0;
+}
+.chip-active { background: var(--green-dim); color: var(--green); border: 1px solid rgba(57,255,20,0.25); }
+.chip-leak { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,51,102,0.25); animation: chip-pulse 2s ease-in-out infinite; }
+@keyframes chip-pulse { 0%,100%{box-shadow:none} 50%{box-shadow:0 0 8px rgba(255,51,102,0.3)} }
+.sub-meta { font-size: 11px; color: var(--text3); }
+.sub-right { text-align: right; flex-shrink: 0; }
+.sub-amount { font-family: var(--font-head); font-size: 17px; font-weight: 800; }
+.sub-amount.green { color: var(--green); }
+.sub-amount.red { color: var(--red); }
+.sub-conf { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* ── DETAIL SCREEN ───────────────────────────────────────────────────────── */
+#detail { background: var(--base); transform: translateX(100%); opacity: 1; }
+#detail.active { transform: translateX(0); opacity: 1; }
+.detail-header {
+  padding: 56px 24px 20px;
+  display: flex; align-items: center; gap: 16px;
+  flex-shrink: 0;
+}
+.back-btn {
+  width: 40px; height: 40px; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; flex-shrink: 0;
+  transition: all 0.2s;
+}
+.back-btn:hover { border-color: var(--green-glow); background: var(--green-dim); }
+.back-btn svg { color: var(--text2); }
+.detail-title-wrap { flex: 1; min-width: 0; }
+.detail-name { font-family: var(--font-head); font-size: 22px; font-weight: 800; }
+.detail-status-row { margin-top: 4px; }
+.detail-body { padding: 0 24px 100px; }
+.cost-card {
+  border-radius: var(--r);
+  padding: 28px; text-align: center;
+  margin-bottom: 20px;
+  position: relative; overflow: hidden;
+}
+.cost-card.green-card { background: var(--green-dim); border: 1px solid rgba(57,255,20,0.2); }
+.cost-card.red-card { background: var(--red-dim); border: 1px solid rgba(255,51,102,0.2); }
+.cost-lbl { font-size: 10px; letter-spacing: 3px; color: var(--text2); font-weight: 600; margin-bottom: 10px; }
+.cost-num {
+  font-family: var(--font-head);
+  font-size: 56px; font-weight: 900;
+  letter-spacing: -2px; line-height: 1;
+}
+.cost-num.green { color: var(--green); text-shadow: 0 0 30px var(--green-glow); }
+.cost-num.red { color: var(--red); text-shadow: 0 0 30px rgba(255,51,102,0.4); }
+.cost-annual { font-size: 12px; color: var(--text2); margin-top: 8px; }
+.info-table {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  overflow: hidden; margin-bottom: 20px;
+}
+.info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+.info-row:last-child { border-bottom: none; }
+.info-key { color: var(--text2); }
+.info-val { font-weight: 600; }
+.info-val.green { color: var(--green); }
+.info-val.red { color: var(--red); }
+
+/* ── Buttons ─────────────────────────────────────────────────────────────── */
+.btn-primary {
+  width: 100%; padding: 16px;
+  background: var(--green);
+  color: #000; font-family: var(--font-body);
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase;
+  border: none; border-radius: var(--r);
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(57,255,20,0.3);
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-primary:hover { box-shadow: 0 0 40px rgba(57,255,20,0.5); transform: translateY(-1px); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-secondary {
+  width: 100%; padding: 15px;
+  background: transparent;
+  color: var(--text2); font-family: var(--font-body);
+  font-size: 14px; font-weight: 600;
+  border: 1px solid var(--border-light);
+  border-radius: var(--r);
+  cursor: pointer; margin-top: 10px;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-secondary:hover { border-color: rgba(57,255,20,0.3); color: var(--green); }
+.btn-secondary:active { transform: scale(0.97); }
+.btn-danger {
+  width: 100%; padding: 16px;
+  background: var(--red-dim);
+  color: var(--red); font-family: var(--font-body);
+  font-size: 14px; font-weight: 700;
+  letter-spacing: 1px;
+  border: 1px solid rgba(255,51,102,0.3);
+  border-radius: var(--r);
+  cursor: pointer; margin-top: 10px;
+  transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+.btn-danger:hover { background: rgba(255,51,102,0.2); box-shadow: 0 0 20px rgba(255,51,102,0.2); }
+.btn-danger:active { transform: scale(0.97); }
+
+/* ── Letter Modal ────────────────────────────────────────────────────────── */
+#letter-modal {
+  position: absolute; inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 200; display: none;
+  align-items: flex-end;
+  padding: 0;
+}
+#letter-modal.open { display: flex; }
+.letter-sheet {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-bottom: none;
+  border-radius: 24px 24px 0 0;
+  padding: 24px;
+  width: 100%;
+  max-height: 80%;
+  display: flex; flex-direction: column;
+  animation: slide-up 0.3s ease;
+}
+@keyframes slide-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.letter-drag {
+  width: 40px; height: 4px;
+  background: var(--text3); border-radius: 2px;
+  margin: 0 auto 20px;
+}
+.letter-title {
+  font-family: var(--font-head);
+  font-size: 18px; font-weight: 700;
+  margin-bottom: 4px;
+}
+.letter-subtitle { font-size: 12px; color: var(--text2); margin-bottom: 16px; }
+.letter-textarea {
+  flex: 1; background: var(--base);
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  color: var(--text); font-family: var(--font-body);
+  font-size: 12px; line-height: 1.8;
+  padding: 16px; resize: none;
+  min-height: 200px;
+  outline: none;
+}
+.letter-actions { display: flex; gap: 10px; margin-top: 14px; }
+.letter-actions .btn-primary { flex: 1; font-size: 12px; padding: 13px; }
+.letter-actions .btn-secondary { flex: 1; font-size: 12px; padding: 12px; margin: 0; }
+.copied-toast {
+  position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+  background: var(--green); color: #000;
+  font-size: 12px; font-weight: 700;
+  padding: 8px 20px; border-radius: 100px;
+  opacity: 0; transition: opacity 0.3s;
+  pointer-events: none; white-space: nowrap;
+  z-index: 300;
+}
+.copied-toast.show { opacity: 1; }
+
+/* ── SETTINGS ────────────────────────────────────────────────────────────── */
+#settings { background: var(--base); }
+.settings-topbar { padding: 56px 24px 24px; flex-shrink: 0; }
+.settings-page-title { font-family: var(--font-head); font-size: 28px; font-weight: 800; }
+.settings-body { padding: 0 24px 100px; }
+.settings-section { margin-bottom: 28px; }
+.settings-section-title { font-size: 10px; letter-spacing: 3px; color: var(--text3); font-weight: 700; margin-bottom: 12px; }
+.settings-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; }
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px; cursor: pointer;
+  transition: background 0.15s;
+}
+.settings-row:last-child { border-bottom: none; }
+.settings-row:hover { background: rgba(255,255,255,0.03); }
+.settings-row-left { display: flex; align-items: center; gap: 12px; }
+.settings-row-icon {
+  width: 34px; height: 34px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+}
+.icon-green { background: var(--green-dim); }
+.icon-blue { background: rgba(59,130,246,0.1); }
+.icon-orange { background: rgba(249,115,22,0.1); }
+.icon-red { background: var(--red-dim); }
+.settings-key { font-weight: 500; color: var(--text); }
+.settings-val { font-size: 12px; color: var(--text2); }
+.settings-val.green { color: var(--green); }
+.settings-val.yellow { color: #FFD700; }
+.jurisdiction-row { display: flex; gap: 10px; padding: 14px 18px; }
+.jur-btn {
+  flex: 1; padding: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text2); font-family: var(--font-body);
+  font-size: 11px; font-weight: 700; letter-spacing: 1px;
+  cursor: pointer; text-align: center;
+  transition: all 0.2s;
+}
+.jur-btn.active {
+  background: var(--green-dim);
+  border-color: rgba(57,255,20,0.3);
+  color: var(--green);
+}
+.jur-btn:hover:not(.active) { border-color: var(--border-light); }
+
+/* ── BOTTOM NAV ──────────────────────────────────────────────────────────── */
+#bottom-nav {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 80px;
+  display: none;
+  background: rgba(14,14,14,0.9);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid var(--border);
+  padding: 0 8px 20px;
+  z-index: 50;
+}
+#bottom-nav.visible { display: flex; }
+.nav-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  gap: 4px; cursor: pointer;
+  padding: 8px; border: none; background: none;
+  border-radius: 12px; transition: all 0.2s;
+  color: var(--text3);
+}
+.nav-item.active { color: var(--green); }
+.nav-item svg { transition: all 0.2s; }
+.nav-item.active svg { filter: drop-shadow(0 0 6px var(--green-glow)); }
+.nav-label { font-size: 9px; letter-spacing: 1px; font-weight: 700; }
+
+/* ── Icons (SVG inline helpers) ──────────────────────────────────────────── */
+.icon { display: inline-block; width: 20px; height: 20px; vertical-align: middle; }
 </style>
 </head>
 <body>
-<div class="app">
+<div id="phone">
 
-<!-- SPLASH -->
-<div id="splash" class="screen active">
-  <div class="splash-title">SubScrub</div>
-  <div class="splash-sub">THE SUBSCRIPTION SNIPER</div>
-  <div class="splash-footer">PRIVACY-FIRST · LOCAL-ONLY</div>
-</div>
+  <!-- ── SPLASH ─────────────────────────────────────────────────────────── -->
+  <div id="splash" class="screen active" data-testid="splash-screen">
+    <div class="splash-logo">
+      <div class="splash-ring"></div>
+      <div class="splash-ring"></div>
+      <div class="splash-ring"></div>
+      <div class="splash-crosshair">
+        <svg viewBox="0 0 96 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="48" cy="48" r="44" stroke="#39FF14" stroke-width="1.5" stroke-dasharray="8 4"/>
+          <circle cx="48" cy="48" r="28" stroke="#39FF14" stroke-width="1.5" opacity="0.5"/>
+          <circle cx="48" cy="48" r="10" fill="#39FF14" opacity="0.9"/>
+          <line x1="48" y1="4"  x2="48" y2="24"  stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
+          <line x1="48" y1="72" x2="48" y2="92"  stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
+          <line x1="4"  y1="48" x2="24" y2="48"  stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
+          <line x1="72" y1="48" x2="92" y2="48"  stroke="#39FF14" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+    </div>
+    <div class="splash-name">SubScrub</div>
+    <div class="splash-tag">THE SUBSCRIPTION SNIPER</div>
+    <div class="splash-bar"></div>
+    <div class="splash-footer">GİZLİLİK ÖNCELİKLİ &nbsp;·&nbsp; YEREL DEPOLAMA</div>
+  </div>
 
-<!-- ONBOARDING -->
-<div id="onboarding" class="screen" style="position:relative">
-  <div id="onb-track" class="onb-slides">
-    <div class="onb-slide">
-      <div class="onb-icon">&#128269;</div>
-      <div class="onb-title">We find the charges you forgot about.</div>
-      <div class="onb-desc">SubScrub scans your bank transactions and email receipts to detect every recurring charge — even the ones that sneak through.</div>
+  <!-- ── ONBOARDING ─────────────────────────────────────────────────────── -->
+  <div id="onboarding" class="screen" data-testid="onboarding-screen">
+    <div class="onb-wrapper">
+      <div class="onb-track" id="onb-track">
+        <!-- Slide 1 -->
+        <div class="onb-slide">
+          <div class="onb-icon-wrap">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+          </div>
+          <div class="onb-title">Unuttuğunuz ücretleri <span>buluyoruz.</span></div>
+          <div class="onb-desc">SubScrub, banka hareketlerinizi ve e-posta makbuzlarınızı tarayarak her yinelenen ücreti tespit eder — sinsi geçenler dahil.</div>
+        </div>
+        <!-- Slide 2 -->
+        <div class="onb-slide">
+          <div class="onb-icon-wrap">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="onb-title">Ne kadar <span>harcandığını</span> gör.</div>
+          <div class="onb-desc">Aylık ve yıllık israfınızı hesaplar, en büyük delikleri sıralar ve unuttuğunuz her aboneliğin tam maliyetini gösterir.</div>
+        </div>
+        <!-- Slide 3 -->
+        <div class="onb-slide">
+          <div class="onb-icon-wrap">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          </div>
+          <div class="onb-title">Hukuki mektupla <span>iptal et.</span></div>
+          <div class="onb-desc">GDPR, KVKK veya standart iptal mektupları anında oluşturulur. Doğrudan uygulamadan gönderin — kopyalama gerekmez.</div>
+        </div>
+        <!-- Slide 4 -->
+        <div class="onb-slide">
+          <div class="onb-icon-wrap">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="onb-title">Verileriniz cihazınızda <span>kalır.</span></div>
+          <div class="onb-desc">Analitik yok. İzleme yok. Bulut senkronizasyonu yok. Her şey yerel olarak işlenir ve depolanır. SubScrub verilerinizi okuyamaz — yalnızca siz okuyabilirsiniz.</div>
+        </div>
+      </div>
     </div>
-    <div class="onb-slide">
-      <div class="onb-icon">&#128184;</div>
-      <div class="onb-title">See exactly how much is leaking.</div>
-      <div class="onb-desc">We calculate your monthly and annual waste, rank your biggest drains, and show you the exact cost of every subscription you forgot you had.</div>
-    </div>
-    <div class="onb-slide">
-      <div class="onb-icon">&#128203;</div>
-      <div class="onb-title">Cancel with legal-grade letters.</div>
-      <div class="onb-desc">Get GDPR, KVKK, or standard cancellation letters generated instantly. Send directly from the app — no copy-pasting required.</div>
-    </div>
-    <div class="onb-slide">
-      <div class="onb-icon">&#128274;</div>
-      <div class="onb-title">Your data never leaves your device.</div>
-      <div class="onb-desc">No analytics. No tracking. No cloud sync. Everything is processed and stored locally. SubScrub cannot read your data — only you can.</div>
+    <div class="onb-footer">
+      <div class="onb-dots">
+        <div class="onb-dot active" id="dot0"></div>
+        <div class="onb-dot" id="dot1"></div>
+        <div class="onb-dot" id="dot2"></div>
+        <div class="onb-dot" id="dot3"></div>
+      </div>
+      <button class="btn-primary" style="width:auto;padding:14px 28px;font-size:13px" id="onb-btn" onclick="onbNext()" data-testid="onboarding-next-btn">Devam</button>
     </div>
   </div>
-  <div class="onb-footer">
-    <div class="dots">
-      <div class="dot active" id="dot0"></div>
-      <div class="dot" id="dot1"></div>
-      <div class="dot" id="dot2"></div>
-      <div class="dot" id="dot3"></div>
-    </div>
-    <button class="btn" style="width:auto;padding:12px 28px" onclick="onbNext()">Next</button>
-  </div>
-</div>
 
-<!-- SCAN -->
-<div id="scan" class="screen" style="position:relative">
-  <div class="spinner" id="scan-spinner"></div>
-  <div class="scan-title" id="scan-title">Scanning...</div>
-  <div class="scan-stage" id="scan-stage">Initializing...</div>
-  <div class="progress-bar" style="width:100%">
-    <div class="progress-fill" id="scan-fill" style="width:0%"></div>
-  </div>
-  <div class="progress-pct" id="scan-pct">0%</div>
-  <div class="scan-note">Running detection on-device.<br/>No data leaves your phone.</div>
-</div>
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="screen" style="display:none;flex-direction:column">
-  <div class="dash-header">
-    <div class="dash-title">Dashboard</div>
-    <div class="demo-badge">DEMO</div>
-  </div>
-  <div class="metric-grid" id="metrics"></div>
-  <div class="section-label">TOP DRAINS</div>
-  <div id="sub-list"></div>
-  <div style="height:20px"></div>
-</div>
-
-<!-- DETAIL -->
-<div id="detail" class="screen" style="display:none;flex-direction:column">
-  <span class="back-btn" onclick="showScreen('dashboard')">&larr; Back</span>
-  <div id="detail-content"></div>
-</div>
-
-<!-- SETTINGS -->
-<div id="settings" class="screen" style="display:none;flex-direction:column">
-  <div style="font-size:22px;font-weight:700;color:var(--primary);margin-bottom:28px">Settings</div>
-  <div class="settings-section">
-    <div class="settings-section-title">DATA SOURCE</div>
-    <div class="settings-list">
-      <div class="settings-row"><span class="settings-key">Mode</span><span class="settings-val" style="color:#ffd700">Demo Mode</span></div>
-      <div class="settings-row"><span class="settings-key">Plaid</span><span class="settings-val">Not connected</span></div>
-      <div class="settings-row"><span class="settings-key">Gmail</span><span class="settings-val">Not connected</span></div>
+  <!-- ── SCAN ───────────────────────────────────────────────────────────── -->
+  <div id="scan" class="screen" data-testid="scan-screen">
+    <div class="scan-grid"></div>
+    <div class="radar-wrap">
+      <div class="radar-circle"></div>
+      <div class="radar-circle"></div>
+      <div class="radar-circle"></div>
+      <div class="radar-circle"></div>
+      <div class="radar-line"></div>
+      <div class="radar-dot" style="top:30%;left:65%"></div>
+      <div class="radar-dot" style="top:60%;left:35%;animation-delay:0.7s"></div>
+      <div class="radar-dot" style="top:45%;left:75%;animation-delay:1.4s"></div>
+    </div>
+    <div class="scan-title" id="scan-title">Taranıyor...</div>
+    <div class="scan-stage" id="scan-stage">Başlatılıyor...</div>
+    <div class="scan-bar-wrap">
+      <div class="scan-bar-fill" id="scan-fill" style="width:0%"></div>
+    </div>
+    <div class="scan-pct" id="scan-pct">%0</div>
+    <div class="scan-found">
+      <span id="scan-flash" class="scan-flash"></span>
+      CİHAZDA İŞLENİYOR · VERİ GÖNDERİLMİYOR
     </div>
   </div>
-  <div class="settings-section">
-    <div class="settings-section-title">LEGAL JURISDICTION</div>
-    <div class="settings-list">
-      <div class="settings-row" onclick="setJurisdiction('GENERIC')" style="cursor:pointer" id="j-GENERIC"><span class="settings-key">GENERIC</span><span class="settings-val">Standard letter</span></div>
-      <div class="settings-row" onclick="setJurisdiction('GDPR')" style="cursor:pointer" id="j-GDPR"><span class="settings-key">GDPR</span><span class="settings-val">EU data protection</span></div>
-      <div class="settings-row" onclick="setJurisdiction('KVKK')" style="cursor:pointer" id="j-KVKK"><span class="settings-key">KVKK</span><span class="settings-val">Turkey data protection</span></div>
-    </div>
-  </div>
-  <div class="settings-section">
-    <div class="settings-section-title">PRIVACY</div>
-    <div class="settings-list">
-      <div class="settings-row"><span class="settings-key">Analytics</span><span class="settings-val">NONE</span></div>
-      <div class="settings-row"><span class="settings-key">Remote Logging</span><span class="settings-val">NONE</span></div>
-      <div class="settings-row"><span class="settings-key">Storage</span><span class="settings-val">Local Only</span></div>
-    </div>
-  </div>
-  <div class="settings-section">
-    <div class="settings-section-title">ABOUT</div>
-    <div class="settings-list">
-      <div class="settings-row"><span class="settings-key">App</span><span class="settings-val">SubScrub</span></div>
-      <div class="settings-row"><span class="settings-key">Version</span><span class="settings-val">1.0.0</span></div>
-      <div class="settings-row"><span class="settings-key">Platform</span><span class="settings-val">iOS + Android</span></div>
-    </div>
-  </div>
-</div>
 
-<!-- BOTTOM NAV -->
-<nav class="bottom-nav" id="bottom-nav" style="display:none">
-  <button class="nav-btn active" id="nav-dashboard" onclick="showScreen('dashboard')"><span class="nav-icon">&#9776;</span>Dashboard</button>
-  <button class="nav-btn" id="nav-settings" onclick="showScreen('settings')"><span class="nav-icon">&#9881;</span>Settings</button>
-</nav>
-</div>
+  <!-- ── DASHBOARD ──────────────────────────────────────────────────────── -->
+  <div id="dashboard" class="screen" data-testid="dashboard-screen">
+    <div class="dash-topbar">
+      <div class="dash-topbar-title">Dashboard</div>
+      <div class="demo-pill">DEMO</div>
+    </div>
+    <div class="dash-hero">
+      <div class="hero-label">AYLIK POTANSİYEL KAYIP</div>
+      <div class="hero-amount" id="hero-waste"></div>
+      <div class="hero-sub"><span id="hero-count"></span> şüpheli sızıntı tespit edildi &nbsp;·&nbsp; <span id="hero-annual"></span>/yıl</div>
+    </div>
+    <div class="metric-row">
+      <div class="metric-box green-box">
+        <div class="metric-lbl">TESPİT</div>
+        <div class="metric-val green" id="m-count"></div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-lbl">AYLIK</div>
+        <div class="metric-val" id="m-monthly"></div>
+      </div>
+      <div class="metric-box">
+        <div class="metric-lbl">YILLIK</div>
+        <div class="metric-val" id="m-annual"></div>
+      </div>
+    </div>
+    <div class="section-hdr">EN BÜYÜK SARF&#8203;İYATLAR</div>
+    <div class="scroll-area">
+      <div class="sub-list" id="dash-sub-list"></div>
+    </div>
+  </div>
+
+  <!-- ── DETAIL ─────────────────────────────────────────────────────────── -->
+  <div id="detail" class="screen" data-testid="detail-screen">
+    <div class="detail-header">
+      <button class="back-btn" onclick="goBack()" data-testid="detail-back-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="detail-title-wrap">
+        <div class="detail-name" id="detail-name"></div>
+        <div class="detail-status-row" id="detail-status"></div>
+      </div>
+    </div>
+    <div class="scroll-area">
+      <div class="detail-body" id="detail-body"></div>
+    </div>
+  </div>
+
+  <!-- ── SETTINGS ──────────────────────────────────────────────────────── -->
+  <div id="settings" class="screen" data-testid="settings-screen">
+    <div class="settings-topbar">
+      <div class="settings-page-title">Ayarlar</div>
+    </div>
+    <div class="scroll-area">
+      <div class="settings-body">
+        <div class="settings-section">
+          <div class="settings-section-title">VERİ KAYNAĞI</div>
+          <div class="settings-list">
+            <div class="settings-row">
+              <div class="settings-row-left">
+                <div class="settings-row-icon icon-green">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <span class="settings-key">Mod</span>
+              </div>
+              <span class="settings-val yellow">Demo Modu</span>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-left">
+                <div class="settings-row-icon icon-blue">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                </div>
+                <span class="settings-key">Plaid</span>
+              </div>
+              <span class="settings-val">Bağlı değil</span>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row-left">
+                <div class="settings-row-icon icon-orange">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F97316" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                </div>
+                <span class="settings-key">Gmail</span>
+              </div>
+              <span class="settings-val">Bağlı değil</span>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">HUKUKİ YETKİ ALANI</div>
+          <div class="settings-list">
+            <div class="jurisdiction-row">
+              <button class="jur-btn active" id="j-GENERIC" onclick="setJurisdiction('GENERIC')" data-testid="jur-generic">GENERIC</button>
+              <button class="jur-btn" id="j-GDPR" onclick="setJurisdiction('GDPR')" data-testid="jur-gdpr">GDPR</button>
+              <button class="jur-btn" id="j-KVKK" onclick="setJurisdiction('KVKK')" data-testid="jur-kvkk">KVKK</button>
+            </div>
+            <div class="settings-row" style="cursor:default">
+              <div class="settings-row-left">
+                <div class="settings-row-icon icon-green">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <span class="settings-key">Aktif Şablon</span>
+              </div>
+              <span class="settings-val green" id="active-jur">Standart Mektup</span>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">GİZLİLİK</div>
+          <div class="settings-list">
+            <div class="settings-row" style="cursor:default">
+              <div class="settings-row-left">
+                <div class="settings-row-icon icon-green">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                </div>
+                <span class="settings-key">Analitik</span>
+              </div>
+              <span class="settings-val green">YOK</span>
+            </div>
+            <div class="settings-row" style="cursor:default">
+              <div class="settings-row-left">
+                <div class="settings-row-icon icon-green">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                </div>
+                <span class="settings-key">Uzak İzleme</span>
+              </div>
+              <span class="settings-val green">YOK</span>
+            </div>
+            <div class="settings-row" style="cursor:default">
+              <div class="settings-row-left">
+                <div class="settings-row-icon icon-green">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
+                </div>
+                <span class="settings-key">Depolama</span>
+              </div>
+              <span class="settings-val green">Yalnızca Yerel</span>
+            </div>
+          </div>
+        </div>
+        <div class="settings-section">
+          <div class="settings-section-title">UYGULAMA HAKKINDA</div>
+          <div class="settings-list">
+            <div class="settings-row" style="cursor:default">
+              <span class="settings-key">Uygulama</span><span class="settings-val">SubScrub</span>
+            </div>
+            <div class="settings-row" style="cursor:default">
+              <span class="settings-key">Versiyon</span><span class="settings-val">1.0.0</span>
+            </div>
+            <div class="settings-row" style="cursor:default">
+              <span class="settings-key">Platform</span><span class="settings-val">iOS + Android</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── BOTTOM NAV ─────────────────────────────────────────────────────── -->
+  <nav id="bottom-nav" data-testid="bottom-nav">
+    <button class="nav-item active" id="nav-dashboard" onclick="showScreen('dashboard')" data-testid="nav-dashboard">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span class="nav-label">Dashboard</span>
+    </button>
+    <button class="nav-item" id="nav-subs" onclick="showAllSubs()" data-testid="nav-subs">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <span class="nav-label">Abonelikler</span>
+    </button>
+    <button class="nav-item" id="nav-settings" onclick="showScreen('settings')" data-testid="nav-settings">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="nav-label">Ayarlar</span>
+    </button>
+  </nav>
+
+  <!-- ── CANCELLATION LETTER MODAL ──────────────────────────────────────── -->
+  <div id="letter-modal" data-testid="letter-modal">
+    <div class="letter-sheet">
+      <div class="letter-drag"></div>
+      <div class="letter-title" id="letter-title">İptal Mektubu</div>
+      <div class="letter-subtitle" id="letter-subtitle"></div>
+      <textarea class="letter-textarea" id="letter-textarea" readonly></textarea>
+      <div class="letter-actions">
+        <button class="btn-primary" onclick="copyLetter()" data-testid="letter-copy-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          Kopyala
+        </button>
+        <button class="btn-secondary" onclick="closeModal()" data-testid="letter-close-btn">Kapat</button>
+      </div>
+    </div>
+  </div>
+  <div class="copied-toast" id="copied-toast">Kopyalandı!</div>
+
+</div><!-- /phone -->
 
 <script>
-// ── Demo data ──────────────────────────────────────────────────────────────
+// ── Demo Data ──────────────────────────────────────────────────────────────
+const ICONS = {
+  netflix: '🎬', spotify: '🎵', adobe: '🎨', chatgpt: '🤖',
+  microsoft: '💼', disney: '🏰', icloud: '☁️', nordvpn: '🛡️',
+  github: '</>', notion: '📝', hulu: '📺', zyxw: '⚙️'
+};
+
 const SUBS = [
-  {id:'s1',name:'Netflix',normalized:'netflix',amount:15.99,currency:'USD',freq:'monthly',status:'active',confidence:0.95,category:'entertainment',source:'bank',cancellationLink:'https://www.netflix.com/cancelplan'},
-  {id:'s2',name:'Spotify',normalized:'spotify',amount:9.99,currency:'USD',freq:'monthly',status:'active',confidence:0.92,category:'entertainment',source:'bank',cancellationLink:'https://www.spotify.com/account/subscription/cancel'},
-  {id:'s3',name:'Adobe Creative Cloud',normalized:'adobe',amount:54.99,currency:'USD',freq:'monthly',status:'potential_leak',confidence:0.58,category:'software',source:'bank',cancellationLink:'https://account.adobe.com/plans'},
-  {id:'s4',name:'ChatGPT Plus',normalized:'chatgpt',amount:20.00,currency:'USD',freq:'monthly',status:'active',confidence:0.88,category:'ai',source:'bank',cancellationLink:'https://chat.openai.com/'},
-  {id:'s5',name:'Microsoft 365',normalized:'microsoft 365',amount:9.99,currency:'USD',freq:'monthly',status:'active',confidence:0.91,category:'software',source:'bank',cancellationLink:'https://account.microsoft.com/services'},
-  {id:'s6',name:'Disney+',normalized:'disney plus',amount:13.99,currency:'USD',freq:'monthly',status:'active',confidence:0.87,category:'entertainment',source:'bank',cancellationLink:'https://www.disneyplus.com/en-gb/unsub-preview'},
-  {id:'s7',name:'iCloud+',normalized:'icloud',amount:2.99,currency:'USD',freq:'monthly',status:'active',confidence:0.93,category:'storage',source:'bank',cancellationLink:'https://support.apple.com/en-us/HT207828'},
-  {id:'s8',name:'NordVPN',normalized:'nordvpn',amount:11.99,currency:'USD',freq:'monthly',status:'potential_leak',confidence:0.52,category:'security',source:'bank',cancellationLink:'https://my.nordaccount.com/dashboard/nordvpn/'},
-  {id:'s9',name:'GitHub Pro',normalized:'github',amount:4.00,currency:'USD',freq:'monthly',status:'active',confidence:0.86,category:'developer',source:'bank',cancellationLink:'https://github.com/settings/billing'},
-  {id:'s10',name:'Notion',normalized:'notion',amount:8.00,currency:'USD',freq:'monthly',status:'active',confidence:0.81,category:'productivity',source:'bank',cancellationLink:'https://www.notion.so/my-account'},
-  {id:'s11',name:'Hulu',normalized:'hulu',amount:17.99,currency:'USD',freq:'monthly',status:'potential_leak',confidence:0.55,category:'entertainment',source:'email',cancellationLink:'https://secure.hulu.com/account/cancel'},
-  {id:'s12',name:'Zyxw Technologies',normalized:'zyxw techno',amount:29.99,currency:'USD',freq:'monthly',status:'potential_leak',confidence:0.41,category:'unknown',source:'bank',cancellationLink:null},
+  {id:'s1', name:'Netflix', key:'netflix', amount:15.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.95, category:'Eğlence', source:'Banka', cancellationLink:'https://www.netflix.com/cancelplan'},
+  {id:'s2', name:'Spotify', key:'spotify', amount:9.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.92, category:'Eğlence', source:'Banka', cancellationLink:'https://www.spotify.com/account/subscription/cancel'},
+  {id:'s3', name:'Adobe Creative Cloud', key:'adobe', amount:54.99, currency:'USD', freq:'Aylık', status:'potential_leak', confidence:0.58, category:'Yazılım', source:'Banka', cancellationLink:'https://account.adobe.com/plans'},
+  {id:'s4', name:'ChatGPT Plus', key:'chatgpt', amount:20.00, currency:'USD', freq:'Aylık', status:'active', confidence:0.88, category:'Yapay Zeka', source:'Banka', cancellationLink:'https://chat.openai.com/'},
+  {id:'s5', name:'Microsoft 365', key:'microsoft', amount:9.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.91, category:'Yazılım', source:'Banka', cancellationLink:'https://account.microsoft.com/services'},
+  {id:'s6', name:'Disney+', key:'disney', amount:13.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.87, category:'Eğlence', source:'Banka', cancellationLink:'https://www.disneyplus.com/en-gb/unsub-preview'},
+  {id:'s7', name:'iCloud+', key:'icloud', amount:2.99, currency:'USD', freq:'Aylık', status:'active', confidence:0.93, category:'Depolama', source:'Banka', cancellationLink:'https://support.apple.com/en-us/HT207828'},
+  {id:'s8', name:'NordVPN', key:'nordvpn', amount:11.99, currency:'USD', freq:'Aylık', status:'potential_leak', confidence:0.52, category:'Güvenlik', source:'Banka', cancellationLink:'https://my.nordaccount.com/dashboard/nordvpn/'},
+  {id:'s9', name:'GitHub Pro', key:'github', amount:4.00, currency:'USD', freq:'Aylık', status:'active', confidence:0.86, category:'Geliştirici', source:'Banka', cancellationLink:'https://github.com/settings/billing'},
+  {id:'s10', name:'Notion', key:'notion', amount:8.00, currency:'USD', freq:'Aylık', status:'active', confidence:0.81, category:'Verimlilik', source:'Banka', cancellationLink:'https://www.notion.so/my-account'},
+  {id:'s11', name:'Hulu', key:'hulu', amount:17.99, currency:'USD', freq:'Aylık', status:'potential_leak', confidence:0.55, category:'Eğlence', source:'E-posta', cancellationLink:'https://secure.hulu.com/cancel'},
+  {id:'s12', name:'Zyxw Technologies', key:'zyxw', amount:29.99, currency:'USD', freq:'Aylık', status:'potential_leak', confidence:0.41, category:'Bilinmeyen', source:'Banka', cancellationLink:null},
 ];
+
+const SCAN_NAMES = ['Netflix', 'Spotify', 'Adobe', 'AWS', 'Dropbox', 'Slack', 'Zoom', 'Figma', 'Linear', 'Notion', 'GitHub', 'Vercel', 'Apple', 'Google', 'Microsoft', 'Hulu', 'Disney+', 'NordVPN', 'ChatGPT', 'Canva'];
 
 let currentJurisdiction = 'GENERIC';
 let currentDetailId = null;
+let prevScreen = 'dashboard';
 
-function fmt(amount, currency='USD'){
-  return new Intl.NumberFormat('en-US',{style:'currency',currency}).format(amount);
+// ── Utils ──────────────────────────────────────────────────────────────────
+function fmt(a, c='USD'){
+  return new Intl.NumberFormat('tr-TR', {style:'currency', currency:c, minimumFractionDigits:2}).format(a);
 }
+function monthlyTotal(){ return SUBS.reduce((a,s)=>a+s.amount,0); }
+function wasteTotal(){ return SUBS.filter(s=>s.status==='potential_leak').reduce((a,s)=>a+s.amount,0); }
+function leakCount(){ return SUBS.filter(s=>s.status==='potential_leak').length; }
 
-function monthlyTotal(){
-  return SUBS.filter(s=>s.status!=='cancelled').reduce((a,s)=>a+s.amount,0);
-}
-
-function wasteTotal(){
-  return SUBS.filter(s=>s.status==='potential_leak').reduce((a,s)=>a+s.amount,0);
-}
-
-// ── Navigation ──────────────────────────────────────────────────────────────
-let currentScreen = 'splash';
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>{s.style.display='none';s.classList.remove('active')});
-  const el=document.getElementById(id);
-  el.style.display='flex';
-  el.style.flexDirection='column';
+// ── Screen Navigation ──────────────────────────────────────────────────────
+function showScreen(id, savePrev=true){
+  if(savePrev && currentScreen && currentScreen!==id) prevScreen = currentScreen;
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active');
+    if(id==='detail' && s.id!=='detail'){
+      s.style.transform = '';
+    }
+  });
+  const el = document.getElementById(id);
   el.classList.add('active');
-  currentScreen=id;
-  const nav=document.getElementById('bottom-nav');
-  const mainScreens=['dashboard','detail','settings'];
-  nav.style.display=mainScreens.includes(id)?'flex':'none';
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const activeNav=id==='detail'?'nav-dashboard':('nav-'+id);
-  const nb=document.getElementById(activeNav);
-  if(nb)nb.classList.add('active');
+  currentScreen = id;
+
+  const mainScreens = ['dashboard','detail','settings'];
+  const nav = document.getElementById('bottom-nav');
+  nav.classList.toggle('visible', mainScreens.includes(id));
+
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  const mapping = {dashboard:'nav-dashboard', detail:'nav-dashboard', settings:'nav-settings'};
+  const nb = document.getElementById(mapping[id]);
+  if(nb) nb.classList.add('active');
+  if(id==='nav-subs') document.getElementById('nav-subs').classList.add('active');
+
+  window.scrollTo && window.scrollTo(0,0);
 }
 
-// ── Onboarding ──────────────────────────────────────────────────────────────
-let onbSlide=0;
+let currentScreen = 'splash';
+function goBack(){ showScreen(prevScreen, false); }
+
+// ── Onboarding ─────────────────────────────────────────────────────────────
+let onbSlide = 0;
 function onbNext(){
-  if(onbSlide<3){
+  if(onbSlide < 3){
     onbSlide++;
-    document.getElementById('onb-track').style.transform=`translateX(-${onbSlide*25}%)`;
-    document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i===onbSlide));
-    if(onbSlide===3)document.querySelector('.onb-footer .btn').textContent='Start Scanning';
+    document.getElementById('onb-track').style.transform = `translateX(-${onbSlide*100}%)`;
+    document.querySelectorAll('.onb-dot').forEach((d,i)=>d.classList.toggle('active', i===onbSlide));
+    if(onbSlide===3) document.getElementById('onb-btn').textContent = 'Taramayı Başlat';
   } else {
     startScan();
   }
 }
 
-// ── Scan ────────────────────────────────────────────────────────────────────
-const STAGES=[
-  [0,'Connecting to sources...'],
-  [15,'Fetching bank transactions...'],
-  [30,'Scanning email receipts...'],
-  [50,'Analyzing patterns...'],
-  [70,'Detecting subscriptions...'],
-  [85,'Calculating costs...'],
-  [95,'Building your list...'],
-  [100,'Done!'],
+// ── Scan ───────────────────────────────────────────────────────────────────
+const STAGES = [
+  [0,'Kaynaklar bağlanıyor...'],
+  [12,'Banka hareketleri alınıyor...'],
+  [28,'E-posta makbuzları taranıyor...'],
+  [45,'Örüntüler analiz ediliyor...'],
+  [62,'Abonelikler tespit ediliyor...'],
+  [78,'Maliyetler hesaplanıyor...'],
+  [92,'Liste oluşturuluyor...'],
+  [100,'Tamamlandı!'],
 ];
+
 function startScan(){
   showScreen('scan');
-  let si=0;
+  let si = 0;
+  let flashIdx = 0;
+  const flashEl = document.getElementById('scan-flash');
+
+  const flashInterval = setInterval(()=>{
+    flashEl.textContent = SCAN_NAMES[flashIdx % SCAN_NAMES.length] + ' TESPİT EDİLDİ';
+    flashEl.classList.add('show');
+    setTimeout(()=>flashEl.classList.remove('show'), 300);
+    flashIdx++;
+  }, 380);
+
   function step(){
-    if(si>=STAGES.length){
-      setTimeout(()=>{buildDashboard();showScreen('dashboard');},400);
+    if(si >= STAGES.length){
+      clearInterval(flashInterval);
+      flashEl.classList.remove('show');
+      setTimeout(()=>{ buildDashboard(); showScreen('dashboard'); }, 500);
       return;
     }
-    const [pct,label]=STAGES[si++];
-    document.getElementById('scan-fill').style.width=pct+'%';
-    document.getElementById('scan-pct').textContent=pct+'%';
-    document.getElementById('scan-stage').textContent=label;
-    if(pct>=100){document.getElementById('scan-title').textContent='Scan Complete';document.getElementById('scan-spinner').style.borderTopColor='transparent';}
-    setTimeout(step, si<=2?600:si<=5?500:400);
+    const [pct, label] = STAGES[si++];
+    document.getElementById('scan-fill').style.width = pct + '%';
+    document.getElementById('scan-pct').textContent = '%' + pct;
+    document.getElementById('scan-stage').textContent = label;
+    if(pct >= 100){
+      document.getElementById('scan-title').textContent = 'Tarama Tamamlandı';
+    }
+    setTimeout(step, si<=2?700:si<=5?550:400);
   }
   step();
 }
 
-// ── Dashboard ────────────────────────────────────────────────────────────────
+// ── Dashboard ──────────────────────────────────────────────────────────────
 function buildDashboard(){
-  const total=monthlyTotal();
-  const waste=wasteTotal();
-  const leakCount=SUBS.filter(s=>s.status==='potential_leak').length;
-  document.getElementById('metrics').innerHTML=`
-    <div class="metric primary">
-      <div class="metric-label">MONTHLY TOTAL</div>
-      <div class="metric-value">${fmt(total)}</div>
-      <div class="metric-sub">${fmt(total*12)}/year</div>
-    </div>
-    <div class="metric" style="border-color:rgba(255,107,53,.25);background:rgba(255,107,53,.06)">
-      <div class="metric-label" style="color:var(--warning)">POTENTIAL WASTE</div>
-      <div class="metric-value" style="color:var(--warning)">${fmt(waste)}</div>
-      <div class="metric-sub">${leakCount} suspected leaks</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">DETECTED</div>
-      <div class="metric-value">${SUBS.length}</div>
-      <div class="metric-sub">subscriptions</div>
-    </div>
-    <div class="metric">
-      <div class="metric-label">ANNUAL COST</div>
-      <div class="metric-value">${fmt(total*12)}</div>
-      <div class="metric-sub">projected</div>
-    </div>`;
+  const total = monthlyTotal();
+  const waste = wasteTotal();
+  const leaks = leakCount();
 
-  const sorted=[...SUBS].sort((a,b)=>b.amount-a.amount);
-  document.getElementById('sub-list').innerHTML=sorted.map(s=>`
-    <div class="sub-card ${s.status==='potential_leak'?'leak':''}" onclick="showDetail('${s.id}')">
-      <div>
-        <div class="sub-name">${s.name}<span class="tag ${s.status==='potential_leak'?'leak':'active'}">${s.status==='potential_leak'?'LEAK':'ACTIVE'}</span></div>
-        <div class="sub-freq">${s.freq.toUpperCase()} · ${s.source.toUpperCase()}</div>
-      </div>
-      <div>
-        <div class="sub-amount ${s.status==='potential_leak'?'leak':''}">${fmt(s.amount)}</div>
-        <div class="sub-conf">${Math.round(s.confidence*100)}% conf.</div>
-      </div>
-    </div>`).join('');
+  document.getElementById('hero-waste').textContent = fmt(waste);
+  document.getElementById('hero-count').textContent = leaks;
+  document.getElementById('hero-annual').textContent = fmt(waste*12);
+  document.getElementById('m-count').textContent = SUBS.length;
+  document.getElementById('m-monthly').textContent = fmt(total).replace('US','');
+  document.getElementById('m-annual').textContent = fmt(total*12).replace('US','');
+
+  const sorted = [...SUBS].sort((a,b)=>{
+    if(a.status==='potential_leak' && b.status!=='potential_leak') return -1;
+    if(b.status==='potential_leak' && a.status!=='potential_leak') return 1;
+    return b.amount - a.amount;
+  });
+
+  document.getElementById('dash-sub-list').innerHTML = sorted.map(s => subCard(s)).join('');
 }
 
-// ── Detail ────────────────────────────────────────────────────────────────────
+function subCard(s){
+  const isLeak = s.status === 'potential_leak';
+  return `<div class="sub-card ${isLeak?'leak':''}" onclick="showDetail('${s.id}')" data-testid="sub-card-${s.key}">
+    ${isLeak ? '<div class="leak-border"></div>' : ''}
+    <div class="sub-icon">${ICONS[s.key]||'📦'}</div>
+    <div class="sub-info">
+      <div class="sub-name-row">
+        <div class="sub-name">${s.name}</div>
+        <div class="status-chip ${isLeak?'chip-leak':'chip-active'}">${isLeak?'SIZINTI':'AKTİF'}</div>
+      </div>
+      <div class="sub-meta">${s.freq.toUpperCase()} · ${s.source.toUpperCase()}</div>
+    </div>
+    <div class="sub-right">
+      <div class="sub-amount ${isLeak?'red':'green'}">${fmt(s.amount)}</div>
+      <div class="sub-conf">%${Math.round(s.confidence*100)} güven</div>
+    </div>
+  </div>`;
+}
+
+// ── All Subs ───────────────────────────────────────────────────────────────
+function showAllSubs(){
+  if(!document.getElementById('m-count').textContent) buildDashboard();
+  showScreen('dashboard');
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('nav-subs').classList.add('active');
+}
+
+// ── Detail ─────────────────────────────────────────────────────────────────
 function showDetail(id){
-  const s=SUBS.find(x=>x.id===id);
-  if(!s)return;
-  currentDetailId=id;
-  const isLeak=s.status==='potential_leak';
-  document.getElementById('detail-content').innerHTML=`
-    <div class="detail-name">${s.name}</div>
-    <div class="detail-badge"><span class="tag ${isLeak?'leak':'active'}">${isLeak?'POTENTIAL LEAK':'VERIFIED ACTIVE'}</span></div>
-    <div class="cost-box ${isLeak?'leak':''}">
-      <div class="cost-label">${s.freq.toUpperCase()} CHARGE</div>
-      <div class="cost-value">${fmt(s.amount,s.currency)}</div>
+  const s = SUBS.find(x=>x.id===id);
+  if(!s) return;
+  currentDetailId = id;
+  const isLeak = s.status === 'potential_leak';
+
+  document.getElementById('detail-name').textContent = s.name;
+  document.getElementById('detail-status').innerHTML = `<div class="status-chip ${isLeak?'chip-leak':'chip-active'}">${isLeak?'POTANSİYEL SIZINTI':'DOĞRULANMIŞ AKTİF'}</div>`;
+
+  document.getElementById('detail-body').innerHTML = `
+    <div class="cost-card ${isLeak?'red-card':'green-card'}">
+      <div class="cost-lbl">${s.freq.toUpperCase()} ÜCRET</div>
+      <div class="cost-num ${isLeak?'red':'green'}">${fmt(s.amount, s.currency)}</div>
+      <div class="cost-annual">${fmt(s.amount*12, s.currency)}/yıl · Tahmini</div>
     </div>
     <div class="info-table">
-      <div class="info-row"><span class="info-key">Category</span><span class="info-val">${s.category}</span></div>
-      <div class="info-row"><span class="info-key">Source</span><span class="info-val">${s.source.toUpperCase()}</span></div>
-      <div class="info-row"><span class="info-key">Confidence</span><span class="info-val green">${Math.round(s.confidence*100)}%</span></div>
-      <div class="info-row"><span class="info-key">Annual Cost</span><span class="info-val">${fmt(s.amount*12,s.currency)}</span></div>
-      <div class="info-row"><span class="info-key">Jurisdiction</span><span class="info-val">${currentJurisdiction}</span></div>
+      <div class="info-row"><span class="info-key">Kategori</span><span class="info-val">${s.category}</span></div>
+      <div class="info-row"><span class="info-key">Kaynak</span><span class="info-val">${s.source.toUpperCase()}</span></div>
+      <div class="info-row"><span class="info-key">Güven Skoru</span><span class="info-val ${isLeak?'red':'green'}">%${Math.round(s.confidence*100)}</span></div>
+      <div class="info-row"><span class="info-key">Yıllık Maliyet</span><span class="info-val">${fmt(s.amount*12, s.currency)}</span></div>
+      <div class="info-row"><span class="info-key">Yetki Alanı</span><span class="info-val">${currentJurisdiction}</span></div>
     </div>
-    ${s.cancellationLink?`<button class="cancel-btn" onclick="window.open('${s.cancellationLink}','_blank')">Cancel ${s.name}</button>`:''}
-    <button class="cancel-btn secondary" onclick="showLegalTemplate('${s.id}')">Generate Cancellation Letter (${currentJurisdiction})</button>
-    <div style="height:20px"></div>`;
+    ${s.cancellationLink ? `<button class="btn-primary" onclick="window.open('${s.cancellationLink}','_blank')" data-testid="cancel-link-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      ${s.name} İptal Et
+    </button>` : ''}
+    <button class="btn-${isLeak?'danger':'secondary'}" onclick="showLetter('${s.id}')" data-testid="generate-letter-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
+      ${currentJurisdiction} İptal Mektubu Oluştur
+    </button>
+  `;
   showScreen('detail');
 }
 
-function showLegalTemplate(id){
-  const s=SUBS.find(x=>x.id===id);
-  if(!s)return;
-  const templates={
-    GENERIC:`Dear ${s.name} Support Team,\n\nI hereby request the immediate cancellation of my subscription (${s.freq} plan, ${fmt(s.amount,s.currency)}).\n\nPlease confirm cancellation within 5 business days and cease any further charges.\n\nSincerely,\n[Your Name]`,
-    GDPR:`Dear ${s.name} Data Controller,\n\nPursuant to Article 17 of the GDPR (Right to Erasure) and Article 7(3) (Right to Withdraw Consent), I hereby withdraw my consent to process my personal data and request:\n\n1. Immediate cancellation of my subscription\n2. Deletion of all personal data held\n3. Confirmation of compliance within 30 days\n\nSubscription: ${s.freq} plan · ${fmt(s.amount,s.currency)}\n\nSincerely,\n[Your Name]`,
-    KVKK:`Sayın ${s.name} Yetkilileri,\n\nKişisel Verilerin Korunması Kanunu (KVKK) Madde 7 kapsamında;\n\n1. Aboneliğimin derhal iptali,\n2. Kişisel verilerimin silinmesi,\n3. 30 gün içinde bildirim yapılması\n\ntalep etmekteyim.\n\nAbonelik: ${s.freq} plan · ${fmt(s.amount,s.currency)}\n\nSaygılarımla,\n[Adınız]`,
+// ── Letter ─────────────────────────────────────────────────────────────────
+function showLetter(id){
+  const s = SUBS.find(x=>x.id===id);
+  if(!s) return;
+  const templates = {
+    GENERIC: `Sayın ${s.name} Destek Ekibi,\n\nBu mektup aracılığıyla ${s.freq.toLowerCase()} aboneliğimin (${fmt(s.amount, s.currency)}) derhal iptal edilmesini talep ediyorum.\n\nLütfen iptal işlemini 5 iş günü içinde onaylayın ve daha fazla ücret talep etmeyin.\n\nSaygılarımla,\n[Adınız]`,
+    GDPR: `Sayın ${s.name} Veri Sorumlusu,\n\nGDPR Madde 17 (Silinme Hakkı) ve Madde 7/3 (Onayı Geri Çekme Hakkı) kapsamında, kişisel verilerimi işlemeye verdiğim onayı geri alıyor ve aşağıdakileri talep ediyorum:\n\n1. Aboneliğimin derhal iptali\n2. Tutulan tüm kişisel verilerin silinmesi\n3. 30 gün içinde uyumluluk teyidi\n\nAbonelik: ${s.freq} plan · ${fmt(s.amount, s.currency)}\n\nSaygılarımla,\n[Adınız]`,
+    KVKK: `Sayın ${s.name} Yetkilileri,\n\n6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK) Madde 7 kapsamında;\n\n1. Aboneliğimin derhal iptali,\n2. Kişisel verilerimin imha edilmesi,\n3. 30 gün içinde yazılı bildirim yapılması\n\ntaleplerimi iletiyorum.\n\nAbonelik: ${s.freq} plan · ${fmt(s.amount, s.currency)}\n\nSaygılarımla,\n[Adınız]`,
   };
-  const text=templates[currentJurisdiction]||templates.GENERIC;
-  const win=window.open('','_blank','width=600,height=500');
-  win.document.write(`<html><body style="background:#0a0a0a;color:#e8e8e8;font-family:monospace;padding:32px;white-space:pre-wrap">${text}\n\n<button onclick="navigator.clipboard.writeText(document.querySelector('pre')?.textContent||'').then(()=>alert('Copied!'))" style="margin-top:20px;padding:10px 20px;background:#00ff87;border:none;cursor:pointer;font-weight:700">Copy to Clipboard</button></body></html>`);
+  const text = templates[currentJurisdiction] || templates.GENERIC;
+  const jLabels = {GENERIC:'Standart İptal', GDPR:'GDPR İptal', KVKK:'KVKK İptal'};
+  document.getElementById('letter-title').textContent = jLabels[currentJurisdiction] + ' Mektubu';
+  document.getElementById('letter-subtitle').textContent = `${s.name} · ${currentJurisdiction} yetki alanı`;
+  document.getElementById('letter-textarea').value = text;
+  document.getElementById('letter-modal').classList.add('open');
 }
 
-// ── Settings ──────────────────────────────────────────────────────────────────
+function copyLetter(){
+  const ta = document.getElementById('letter-textarea');
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(ta.value).then(showCopiedToast);
+  } else {
+    ta.select(); document.execCommand('copy'); showCopiedToast();
+  }
+}
+function showCopiedToast(){
+  const t = document.getElementById('copied-toast');
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2000);
+}
+function closeModal(){
+  document.getElementById('letter-modal').classList.remove('open');
+}
+
+// ── Settings ───────────────────────────────────────────────────────────────
+const JUR_LABELS = {GENERIC:'Standart Mektup', GDPR:'AB Veri Koruma (GDPR)', KVKK:'Türkiye Veri Koruma (KVKK)'};
 function setJurisdiction(j){
-  currentJurisdiction=j;
+  currentJurisdiction = j;
   ['GENERIC','GDPR','KVKK'].forEach(jj=>{
-    const row=document.getElementById('j-'+jj);
-    row.querySelector('.settings-val').style.color=jj===j?'var(--primary)':'var(--muted)';
-    row.querySelector('.settings-key').style.color=jj===j?'var(--primary)':'var(--text)';
+    document.getElementById('j-'+jj).classList.toggle('active', jj===j);
   });
+  document.getElementById('active-jur').textContent = JUR_LABELS[j];
 }
-setJurisdiction('GENERIC');
 
-// ── Boot ──────────────────────────────────────────────────────────────────────
-setTimeout(()=>{ showScreen('onboarding'); }, 2000);
+// ── Boot ───────────────────────────────────────────────────────────────────
+setTimeout(()=>{ showScreen('onboarding'); }, 2400);
 </script>
 </body>
 </html>
