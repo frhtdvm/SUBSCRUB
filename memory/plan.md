@@ -196,7 +196,7 @@ Show result + add to local learning cache
 ---
 
 ## Phase 5 — MENA Banking (Lean Technologies)
-**Status:** PENDING  
+**Status:** ✅ DONE  
 **Effort:** 3-4 days  
 **Value:** UAE, Saudi Arabia, Egypt, Kuwait, Bahrain — high-value market
 
@@ -211,6 +211,30 @@ Show result + add to local learning cache
 - OAuth2 similar to Plaid
 - Credentials needed: `LEAN_APP_TOKEN`
 - Website: lean.mx
+
+### Implemented (Web Simulator + Backend)
+- FastAPI `/api/lean/customer`, `/api/lean/token`, `/api/lean/accounts`, `/api/lean/transactions`, `/api/lean/webhook`
+- Demo mode (no LEAN_APP_TOKEN): 17 realistic AED transactions returned
+- Frontend calls `/api/lean/transactions` when MENA bank is authorized
+- AED/SAR currency handled end-to-end: amounts stored with `currency:'AED'`, formatted via `Intl.NumberFormat`
+- 9 MENA banks in region selector: Emirates NBD, FAB, ADCB, Mashreq, Al Rajhi, SNB, Riyad, CIB, NBK
+- MENA-specific services added to detection engine: Anghami Plus, Shahid VIP, OSN+, beIN Sports, STC Play, Talabat Gold, Noon Premium, Dubai Fitness, Netflix MENA, Spotify MENA
+
+### Native SDK Notes (for future Phase 5 native migration)
+```typescript
+// Install: yarn add @lean-tech/react-native-lean-link
+// iOS: cd ios && pod install
+// Android: automatic linking
+import { Lean } from '@lean-tech/react-native-lean-link';
+Lean.connect({
+  appToken: LEAN_APP_TOKEN,       // from lean.mx dashboard
+  customerId: customer_id,        // from POST /api/lean/customer
+  permissions: ['identity', 'accounts', 'transactions', 'balance'],
+  sandbox: true,                  // false in production
+  onSuccess: ({ bankIdentifier, entityId }) => { /* exchange for access */ },
+  onError: (err) => console.error(err),
+});
+```
 
 ---
 
@@ -302,5 +326,5 @@ function getBankingConnector(country: string): BankingConnector {
 | 3c | TrueLayer (EU) | ✅ DONE | Web simulator — Revolut, Monzo, N26, HSBC, Barclays + 5 more |
 | 3d | Lean (MENA) | ✅ DONE | Web simulator — Emirates NBD, Al Rajhi, CIB + 6 more |
 | 4 | AI Analysis | ✅ DONE | GPT-4.1-mini, FastAPI backend, localStorage cache, Pro gated |
-| 5 | Lean Tech (MENA) | ⬜ PENDING | |
+| 5 | Lean Tech (MENA) | ✅ DONE | Backend API + AED currency + 9 MENA banks + MENA service detection |
 | 6 | Salt Edge (Global) | ⬜ PENDING | |

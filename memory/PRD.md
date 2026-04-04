@@ -91,7 +91,15 @@ Build a full-stack production application named "SubScrub" based on `docs/PRODUC
 - Fixed TypeScript closure narrowing in SubscriptionDetailScreen
 - Result: 0 TS errors, 23/23 tests
 
-### Session 4 (2026-02) — Premium Web Simulator
+### Session 5 (2026-02) — Phase 5: Lean Technologies MENA Complete
+- Fixed critical `server.py` bug: duplicate `app = FastAPI(...)` definition removed (Lean endpoints were dead)
+- Fixed Python walrus-operator typo in `_demo_mena_transactions`
+- Frontend: MENA bank connect now calls `/api/lean/transactions` (FastAPI backend) — real API proxy when `LEAN_APP_TOKEN` set, demo mode returns 17 AED transactions
+- Frontend: `generateBankTransactions` menaExtra updated with realistic AED amounts (Netflix 39.99, Anghami 19.99, Shahid 29.99, etc.)
+- Frontend: `detectSubscriptionsFromTransactions` now uses `tx.currency` (was hardcoded 'USD')
+- Frontend: 14 MENA-specific services added to detection engine (Anghami Plus, Shahid VIP, OSN+, beIN Sports, STC Play, Talabat Gold, Noon Premium, Dubai Fitness, Netflix MENA, Spotify MENA)
+- Backend: All Lean endpoints operational: `/api/lean/customer`, `/api/lean/token`, `/api/lean/accounts`, `/api/lean/transactions`, `/api/lean/webhook`
+- `plan.md` Phase 5 marked ✅ DONE
 - Rebuilt web simulator (`/app/frontend/public/index.html`) with premium fintech design
 - Phone frame (393px) centered on desktop with neon green glow
 - Outfit + Manrope fonts, #39FF14 green / #FF3366 red neon palette
