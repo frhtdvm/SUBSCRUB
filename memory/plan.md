@@ -272,7 +272,7 @@ function getBankingConnector(country: string): BankingConnector {
 | 0 | Native app scaffold | ✅ DONE | SDK 54, all screens |
 | 0 | Web simulator | ✅ DONE | Premium design, English |
 | 1 | CSV Upload | ✅ DONE | Web simulator fully functional |
-| 2 | IAP Paywall | ⬜ PENDING | |
+| 2 | IAP Paywall | ✅ DONE | Web simulator — mock purchase, localStorage persistence |
 | 3a | Plaid (US) | ⬜ PENDING | |
 | 3b | BDDK (Turkey) | ⬜ PENDING | |
 | 3c | TrueLayer (EU) | ⬜ PENDING | |
