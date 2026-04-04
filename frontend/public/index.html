@@ -660,6 +660,145 @@ body {
 /* ── Icons (SVG inline helpers) ──────────────────────────────────────────── */
 .icon { display: inline-block; width: 20px; height: 20px; vertical-align: middle; }
 
+/* ── BANK CONNECT SCREEN ─────────────────────────────────────────────────── */
+#bank-connect { background: var(--base); transform: translateX(100%); opacity: 1; transition: transform 0.35s cubic-bezier(0.4,0,0.2,1); }
+#bank-connect.active { transform: translateX(0); opacity: 1; }
+
+.bc-header {
+  padding: 56px 24px 16px;
+  display: flex; align-items: center; gap: 16px; flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+.bc-title-wrap { flex: 1; }
+.bc-title { font-family: var(--font-head); font-size: 20px; font-weight: 800; }
+.bc-subtitle { font-size: 12px; color: var(--text2); margin-top: 3px; }
+
+/* Region selector */
+.region-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 10px; padding: 20px 24px;
+}
+.region-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px 14px;
+  cursor: pointer; transition: all 0.2s;
+  display: flex; align-items: center; gap: 12px;
+}
+.region-card:hover { border-color: rgba(57,255,20,0.3); background: var(--green-dim); }
+.region-card:active { transform: scale(0.97); }
+.region-flag { font-size: 24px; }
+.region-info { flex: 1; min-width: 0; }
+.region-name { font-size: 13px; font-weight: 700; }
+.region-provider { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* Bank search */
+.bank-search-wrap { padding: 16px 24px 8px; flex-shrink: 0; }
+.bank-search-input {
+  width: 100%; padding: 13px 16px 13px 42px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-sm); color: var(--text);
+  font-family: var(--font-body); font-size: 14px;
+  outline: none; transition: border-color 0.2s;
+  position: relative;
+}
+.bank-search-input:focus { border-color: rgba(57,255,20,0.4); }
+.bank-search-wrap { position: relative; }
+.bank-search-icon {
+  position: absolute; left: 38px; top: 50%;
+  transform: translateY(-50%); pointer-events: none;
+  color: var(--text3);
+}
+.provider-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 12px; border-radius: 100px;
+  font-size: 10px; font-weight: 700; letter-spacing: 1px;
+  margin: 0 24px 12px;
+}
+.pb-plaid   { background: rgba(0,166,81,0.12); color: #00A651; border: 1px solid rgba(0,166,81,0.25); }
+.pb-bddk    { background: rgba(230,0,35,0.1); color: #E60023; border: 1px solid rgba(230,0,35,0.2); }
+.pb-truelayer { background: rgba(59,130,246,0.1); color: #3B82F6; border: 1px solid rgba(59,130,246,0.2); }
+.pb-lean    { background: rgba(139,92,246,0.1); color: #8B5CF6; border: 1px solid rgba(139,92,246,0.2); }
+
+/* Bank list */
+.bank-list { padding: 0 24px 100px; }
+.bank-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border-radius: var(--r);
+  background: var(--surface); border: 1px solid var(--border);
+  margin-bottom: 8px; cursor: pointer;
+  transition: all 0.2s;
+}
+.bank-item:hover { border-color: rgba(57,255,20,0.25); background: rgba(57,255,20,0.03); }
+.bank-item:active { transform: scale(0.99); }
+.bank-logo {
+  width: 44px; height: 44px; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+  border: 1px solid var(--border);
+}
+.bank-name { font-size: 14px; font-weight: 600; }
+.bank-country { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.bank-arrow { margin-left: auto; color: var(--text3); }
+
+/* OAuth consent screen */
+#oauth-screen {
+  position: absolute; inset: 0;
+  background: var(--base);
+  display: none; flex-direction: column;
+  z-index: 10;
+}
+#oauth-screen.open { display: flex; }
+.oauth-topbar {
+  padding: 56px 24px 16px;
+  display: flex; align-items: center; gap: 14px; flex-shrink: 0;
+}
+.oauth-body { flex: 1; padding: 0 24px; display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center; }
+.oauth-logo-row { display: flex; align-items: center; gap: 16px; margin-bottom: 28px; }
+.oauth-bank-logo {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: var(--surface); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+}
+.oauth-link-icon { color: var(--text3); }
+.oauth-app-logo {
+  width: 64px; height: 64px; border-radius: 18px;
+  background: var(--green-dim); border: 1px solid rgba(57,255,20,0.25);
+  display: flex; align-items: center; justify-content: center;
+}
+.oauth-bank-name { font-family: var(--font-head); font-size: 22px; font-weight: 800; margin-bottom: 8px; }
+.oauth-desc { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 28px; }
+.oauth-perms { width: 100%; background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); overflow: hidden; margin-bottom: 24px; text-align: left; }
+.oauth-perm-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid var(--border); font-size: 13px; }
+.oauth-perm-row:last-child { border-bottom: none; }
+.oauth-perm-icon { width: 28px; height: 28px; border-radius: 8px; background: var(--green-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.oauth-security { font-size: 11px; color: var(--text3); display: flex; align-items: center; gap: 6px; }
+.oauth-footer { padding: 16px 24px 40px; flex-shrink: 0; }
+
+/* Connecting animation */
+#connecting-overlay {
+  position: absolute; inset: 0; background: var(--base);
+  display: none; flex-direction: column; align-items: center; justify-content: center;
+  z-index: 20;
+}
+#connecting-overlay.open { display: flex; }
+.connecting-spinner {
+  width: 72px; height: 72px; border-radius: 50%;
+  border: 3px solid var(--green-dim);
+  border-top-color: var(--green);
+  animation: spin 0.9s linear infinite;
+  margin-bottom: 28px;
+  box-shadow: 0 0 30px var(--green-glow);
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.connecting-title { font-family: var(--font-head); font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.connecting-sub { font-size: 13px; color: var(--text2); text-align: center; max-width: 240px; line-height: 1.6; }
+.connecting-steps { margin-top: 32px; display: flex; flex-direction: column; gap: 10px; width: 260px; }
+.conn-step { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text3); }
+.conn-step.done { color: var(--green); }
+.conn-step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text3); flex-shrink: 0; }
+.conn-step.done .conn-step-dot { background: var(--green); box-shadow: 0 0 8px var(--green-glow); }
+
 /* ── PAYWALL MODAL ───────────────────────────────────────────────────────── */
 #paywall-modal {
   position: absolute; inset: 0;
@@ -1062,7 +1201,7 @@ body {
 
         <!-- METHOD C: Bank Connect -->
         <div class="connect-section-title">REAL-TIME · AUTOMATIC</div>
-        <div class="method-card soon" data-testid="method-bank">
+        <div class="method-card" onclick="showScreen('bank-connect')" data-testid="method-bank" style="cursor:pointer">
           <div class="method-header">
             <div class="method-left">
               <div class="method-icon blue-icon">
@@ -1073,14 +1212,13 @@ body {
                 <div class="method-desc">OAuth — your password stays with your bank</div>
               </div>
             </div>
-            <div class="method-badge badge-soon">COMING SOON</div>
+            <div class="method-badge badge-free">NEW</div>
           </div>
           <div class="method-tags">
             <span class="method-tag">🇺🇸 Plaid</span>
             <span class="method-tag">🇹🇷 BDDK</span>
             <span class="method-tag">🇪🇺 TrueLayer</span>
             <span class="method-tag">🇸🇦 Lean</span>
-            <span class="method-tag">🌏 Salt Edge</span>
           </div>
         </div>
 
@@ -1097,6 +1235,146 @@ body {
 
       </div>
     </div>
+  </div>
+
+  <!-- ── BANK CONNECT SCREEN ────────────────────────────────────────────── -->
+  <div id="bank-connect" class="screen" data-testid="bank-connect-screen">
+
+    <!-- Header -->
+    <div class="bc-header">
+      <button class="back-btn" onclick="showScreen('connect')" data-testid="bc-back-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="bc-title-wrap">
+        <div class="bc-title" id="bc-title">Select Your Region</div>
+        <div class="bc-subtitle" id="bc-subtitle">Your credentials never leave your bank</div>
+      </div>
+    </div>
+
+    <!-- STATE 1: Region selector -->
+    <div id="bc-regions" class="scroll-area">
+      <div style="padding:8px 24px 4px">
+        <div style="font-size:10px;letter-spacing:3px;color:var(--text3);font-weight:700;margin-bottom:12px;">CHOOSE YOUR COUNTRY</div>
+      </div>
+      <div class="region-grid">
+        <div class="region-card" onclick="selectRegion('us')" data-testid="region-us">
+          <div class="region-flag">🇺🇸</div>
+          <div class="region-info">
+            <div class="region-name">US / Canada</div>
+            <div class="region-provider">via Plaid</div>
+          </div>
+        </div>
+        <div class="region-card" onclick="selectRegion('tr')" data-testid="region-tr">
+          <div class="region-flag">🇹🇷</div>
+          <div class="region-info">
+            <div class="region-name">Turkey</div>
+            <div class="region-provider">via BDDK TR-API</div>
+          </div>
+        </div>
+        <div class="region-card" onclick="selectRegion('eu')" data-testid="region-eu">
+          <div class="region-flag">🇪🇺</div>
+          <div class="region-info">
+            <div class="region-name">EU / UK</div>
+            <div class="region-provider">via TrueLayer</div>
+          </div>
+        </div>
+        <div class="region-card" onclick="selectRegion('mena')" data-testid="region-mena">
+          <div class="region-flag">🇸🇦</div>
+          <div class="region-info">
+            <div class="region-name">MENA</div>
+            <div class="region-provider">via Lean Technologies</div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:4px 24px 24px">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r-sm);padding:14px 16px;">
+          <div style="font-size:11px;color:var(--text2);line-height:1.7;">
+            <strong style="color:var(--text)">How it works:</strong> SubScrub uses OAuth — you log in directly at your bank's secure page. We never see your password or credentials. Only read-only transaction data is shared.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATE 2: Bank list -->
+    <div id="bc-banklist" style="display:none;flex:1;overflow:hidden;flex-direction:column;">
+      <div class="bank-search-wrap" style="padding-bottom:0">
+        <svg class="bank-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input class="bank-search-input" id="bank-search" type="text" placeholder="Search your bank..." oninput="filterBanks(this.value)" data-testid="bank-search-input"/>
+      </div>
+      <div id="provider-badge-wrap" style="padding:10px 24px 0"></div>
+      <div class="scroll-area">
+        <div class="bank-list" id="bank-list-items"></div>
+      </div>
+    </div>
+
+    <!-- OAuth consent overlay -->
+    <div id="oauth-screen">
+      <div class="oauth-topbar">
+        <button class="back-btn" onclick="closeOAuth()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        </button>
+        <div style="font-size:13px;font-weight:600;color:var(--text2)">Secure Authorization</div>
+      </div>
+      <div class="oauth-body">
+        <div class="oauth-logo-row">
+          <div class="oauth-bank-logo" id="oauth-bank-logo"></div>
+          <svg class="oauth-link-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+          <div class="oauth-app-logo">
+            <svg width="28" height="28" viewBox="0 0 96 96" fill="none"><circle cx="48" cy="48" r="20" fill="#39FF14" opacity="0.9"/><line x1="48" y1="10" x2="48" y2="30" stroke="#39FF14" stroke-width="3" stroke-linecap="round"/><line x1="48" y1="66" x2="48" y2="86" stroke="#39FF14" stroke-width="3" stroke-linecap="round"/><line x1="10" y1="48" x2="30" y2="48" stroke="#39FF14" stroke-width="3" stroke-linecap="round"/><line x1="66" y1="48" x2="86" y2="48" stroke="#39FF14" stroke-width="3" stroke-linecap="round"/></svg>
+          </div>
+        </div>
+        <div class="oauth-bank-name" id="oauth-bank-name"></div>
+        <div class="oauth-desc">SubScrub is requesting <strong>read-only</strong> access to your account transactions. Your login credentials stay with your bank.</div>
+        <div class="oauth-perms">
+          <div class="oauth-perm-row">
+            <div class="oauth-perm-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+              <div style="font-weight:600;font-size:13px">Transaction history</div>
+              <div style="font-size:11px;color:var(--text3)">Last 12 months, read only</div>
+            </div>
+          </div>
+          <div class="oauth-perm-row">
+            <div class="oauth-perm-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#39FF14" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+              <div style="font-weight:600;font-size:13px">Account balance</div>
+              <div style="font-size:11px;color:var(--text3)">Current balance only</div>
+            </div>
+          </div>
+          <div class="oauth-perm-row" style="border:none">
+            <div class="oauth-perm-icon" style="background:var(--red-dim);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FF3366" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+            <div>
+              <div style="font-weight:600;font-size:13px">No payment access</div>
+              <div style="font-size:11px;color:var(--text3)">SubScrub cannot move money</div>
+            </div>
+          </div>
+        </div>
+        <div class="oauth-security">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          256-bit encryption · OAuth 2.0 · No credential storage
+        </div>
+      </div>
+      <div class="oauth-footer">
+        <button class="btn-primary" onclick="authorizeOAuth()" data-testid="oauth-authorize-btn">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          Authorize SubScrub
+        </button>
+        <button class="btn-secondary" onclick="closeOAuth()" style="margin-top:10px">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Connecting animation overlay -->
+    <div id="connecting-overlay">
+      <div class="connecting-spinner"></div>
+      <div class="connecting-title">Connecting securely...</div>
+      <div class="connecting-sub" id="connecting-bank-name"></div>
+      <div class="connecting-steps">
+        <div class="conn-step" id="cs1"><div class="conn-step-dot"></div>Establishing secure connection</div>
+        <div class="conn-step" id="cs2"><div class="conn-step-dot"></div>Verifying authorization token</div>
+        <div class="conn-step" id="cs3"><div class="conn-step-dot"></div>Fetching transaction history</div>
+        <div class="conn-step" id="cs4"><div class="conn-step-dot"></div>Running subscription detection</div>
+      </div>
+    </div>
+
   </div>
 
   <!-- ── SCAN ───────────────────────────────────────────────────────────── -->
@@ -1488,12 +1766,7 @@ function leakCount(){ return SUBS.filter(s=>s.status==='potential_leak').length;
 // ── Screen Navigation ──────────────────────────────────────────────────────
 function showScreen(id, savePrev=true){
   if(savePrev && currentScreen && currentScreen!==id) prevScreen = currentScreen;
-  document.querySelectorAll('.screen').forEach(s=>{
-    s.classList.remove('active');
-    if(id==='detail' && s.id!=='detail'){
-      s.style.transform = '';
-    }
-  });
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   const el = document.getElementById(id);
   el.classList.add('active');
   currentScreen = id;
@@ -1506,9 +1779,6 @@ function showScreen(id, savePrev=true){
   const mapping = {dashboard:'nav-dashboard', detail:'nav-dashboard', settings:'nav-settings'};
   const nb = document.getElementById(mapping[id]);
   if(nb) nb.classList.add('active');
-  if(id==='nav-subs') document.getElementById('nav-subs').classList.add('active');
-
-  window.scrollTo && window.scrollTo(0,0);
 }
 
 let currentScreen = 'splash';
@@ -1687,7 +1957,7 @@ const KNOWN_SERVICES = {
   'apple fitness':{name:'Apple Fitness+',category:'Fitness',monthly:9.99},
 };
 
-function detectSubscriptionsFromTransactions(txs){
+function detectSubscriptionsFromTransactions(txs, sourceLabel='Bank Import'){
   const found = {};
   txs.forEach(tx => {
     const desc = tx.description.toLowerCase();
@@ -1705,7 +1975,7 @@ function detectSubscriptionsFromTransactions(txs){
             status: 'potential_leak',   // start as potential — confirmed when seen 2+ times
             confidence: 0.72,
             category: svc.category,
-            source: 'CSV Import',
+            source: sourceLabel,
             cancellationLink: null,
             occurrences: 1,
           };
@@ -1727,16 +1997,17 @@ function detectSubscriptionsFromTransactions(txs){
 
 function analyzeCSV(){
   if(parsedTransactions.length === 0) return;
-  const detected = detectSubscriptionsFromTransactions(parsedTransactions);
+  const detected = detectSubscriptionsFromTransactions(parsedTransactions, 'CSV Import');
   if(detected.length > 0){
     SUBS.length = 0;
     detected.forEach((s,i) => { s.id = 's'+i; SUBS.push(s); });
   }
+  currentImportLabel = 'CSV IMPORT';
   startScanWithMode('csv', parsedTransactions.length);
 }
 
 function useDemoData(){
-  // Reset to original demo data if needed, then scan
+  currentImportLabel = 'DEMO';
   startScanWithMode('demo', 0);
 }
 
@@ -1812,13 +2083,14 @@ function buildDashboard(){
   // Update top-bar pill
   const pill = document.querySelector('.demo-pill');
   if(pill){
-    if(parsedTransactions.length > 0){
-      pill.textContent = 'CSV IMPORT';
+    pill.textContent = currentImportLabel;
+    const isBank = currentImportLabel !== 'DEMO' && currentImportLabel !== 'CSV IMPORT';
+    const isCSV  = currentImportLabel === 'CSV IMPORT';
+    if(isCSV || isBank){
       pill.style.background = 'rgba(57,255,20,0.12)';
       pill.style.borderColor = 'rgba(57,255,20,0.3)';
       pill.style.color = '#39FF14';
     } else {
-      pill.textContent = 'DEMO';
       pill.style.background = '';
       pill.style.borderColor = '';
       pill.style.color = '';
@@ -1909,6 +2181,7 @@ function showDetail(id){
 
 // ── IAP / Paywall ─────────────────────────────────────────────────────────
 let isPro = localStorage.getItem('subscrub_pro') === '1';
+let currentImportLabel = 'DEMO'; // Updated per import mode
 
 function openPaywall(){ document.getElementById('paywall-modal').classList.add('open'); }
 function closePaywall(){ document.getElementById('paywall-modal').classList.remove('open'); }
@@ -2014,6 +2287,219 @@ function showCopiedToast(){
 }
 function closeModal(){
   document.getElementById('letter-modal').classList.remove('open');
+}
+
+// ── Banking Layer ──────────────────────────────────────────────────────────
+const BANKS = {
+  us: {
+    provider: 'Plaid', badgeClass: 'pb-plaid',
+    list: [
+      {id:'chase',      name:'Chase',            country:'United States', emoji:'🏦', color:'#003087'},
+      {id:'bofa',       name:'Bank of America',  country:'United States', emoji:'🏦', color:'#E31837'},
+      {id:'wellsfargo', name:'Wells Fargo',      country:'United States', emoji:'🏦', color:'#D71E28'},
+      {id:'citi',       name:'Citibank',         country:'United States', emoji:'🏦', color:'#003B70'},
+      {id:'capitalone', name:'Capital One',      country:'United States', emoji:'💳', color:'#D03027'},
+      {id:'amex',       name:'American Express', country:'United States', emoji:'💳', color:'#007BC1'},
+      {id:'usbank',     name:'US Bank',          country:'United States', emoji:'🏦', color:'#0C2340'},
+      {id:'tdbank',     name:'TD Bank',          country:'US / Canada',   emoji:'🏦', color:'#34B233'},
+      {id:'rbc',        name:'RBC Royal Bank',   country:'Canada',        emoji:'🏦', color:'#003168'},
+    ]
+  },
+  tr: {
+    provider: 'BDDK TR-API', badgeClass: 'pb-bddk',
+    list: [
+      {id:'garanti',    name:'Garanti BBVA',     country:'Türkiye', emoji:'🏦', color:'#00A650'},
+      {id:'isbank',     name:'İş Bankası',       country:'Türkiye', emoji:'🏦', color:'#003087'},
+      {id:'akbank',     name:'Akbank',           country:'Türkiye', emoji:'🏦', color:'#E31837'},
+      {id:'yapikredi',  name:'Yapı Kredi',       country:'Türkiye', emoji:'🏦', color:'#003B70'},
+      {id:'ziraat',     name:'Ziraat Bankası',   country:'Türkiye', emoji:'🏦', color:'#CC0000'},
+      {id:'halkbank',   name:'Halkbank',         country:'Türkiye', emoji:'🏦', color:'#1A5276'},
+      {id:'vakifbank',  name:'VakıfBank',        country:'Türkiye', emoji:'🏦', color:'#F5A623'},
+      {id:'qnb',        name:'QNB Finansbank',   country:'Türkiye', emoji:'🏦', color:'#8B0000'},
+      {id:'denizbank',  name:'Denizbank',        country:'Türkiye', emoji:'🏦', color:'#0047AB'},
+      {id:'enpara',     name:'Enpara.com',       country:'Türkiye', emoji:'📱', color:'#FF6B00'},
+    ]
+  },
+  eu: {
+    provider: 'TrueLayer (PSD2)', badgeClass: 'pb-truelayer',
+    list: [
+      {id:'revolut',    name:'Revolut',          country:'UK / EU', emoji:'💳', color:'#191C1F'},
+      {id:'monzo',      name:'Monzo',            country:'UK',      emoji:'🏦', color:'#FF6B00'},
+      {id:'n26',        name:'N26',              country:'EU',      emoji:'📱', color:'#1A1A1A'},
+      {id:'hsbc',       name:'HSBC',             country:'UK / EU', emoji:'🏦', color:'#DB0011'},
+      {id:'barclays',   name:'Barclays',         country:'UK',      emoji:'🏦', color:'#00AEEF'},
+      {id:'lloyds',     name:'Lloyds Bank',      country:'UK',      emoji:'🏦', color:'#006A4E'},
+      {id:'ing',        name:'ING',              country:'EU',      emoji:'🏦', color:'#FF6600'},
+      {id:'deutsche',   name:'Deutsche Bank',    country:'Germany', emoji:'🏦', color:'#005CA9'},
+      {id:'bnp',        name:'BNP Paribas',      country:'France',  emoji:'🏦', color:'#00965E'},
+      {id:'starling',   name:'Starling Bank',    country:'UK',      emoji:'📱', color:'#6935FF'},
+    ]
+  },
+  mena: {
+    provider: 'Lean Technologies', badgeClass: 'pb-lean',
+    list: [
+      {id:'emiratesnbd',name:'Emirates NBD',     country:'UAE',          emoji:'🏦', color:'#B8860B'},
+      {id:'fab',        name:'First Abu Dhabi',  country:'UAE',          emoji:'🏦', color:'#004B87'},
+      {id:'adcb',       name:'ADCB',             country:'UAE',          emoji:'🏦', color:'#E31837'},
+      {id:'mashreq',    name:'Mashreq Bank',     country:'UAE',          emoji:'🏦', color:'#E20074'},
+      {id:'alrajhi',    name:'Al Rajhi Bank',    country:'Saudi Arabia', emoji:'🏦', color:'#006633'},
+      {id:'snb',        name:'Saudi Natl Bank',  country:'Saudi Arabia', emoji:'🏦', color:'#003087'},
+      {id:'riyad',      name:'Riyad Bank',       country:'Saudi Arabia', emoji:'🏦', color:'#C8A951'},
+      {id:'cib',        name:'CIB Egypt',        country:'Egypt',        emoji:'🏦', color:'#003087'},
+      {id:'nbk',        name:'National Bank KW', country:'Kuwait',       emoji:'🏦', color:'#003087'},
+    ]
+  }
+};
+
+let currentRegion = null;
+let currentBankId = null;
+let allBanksForRegion = [];
+
+function selectRegion(region){
+  currentRegion = region;
+  const data = BANKS[region];
+  allBanksForRegion = data.list;
+
+  // Show bank list, hide region selector
+  document.getElementById('bc-regions').style.display = 'none';
+  const bl = document.getElementById('bc-banklist');
+  bl.style.display = 'flex';
+
+  // Update header
+  const regionLabels = {us:'🇺🇸 US / Canada', tr:'🇹🇷 Turkey', eu:'🇪🇺 EU / UK', mena:'🇸🇦 MENA'};
+  document.getElementById('bc-title').textContent = 'Choose Your Bank';
+  document.getElementById('bc-subtitle').textContent = 'Powered by ' + data.provider;
+
+  // Provider badge
+  document.getElementById('provider-badge-wrap').innerHTML =
+    `<span class="provider-badge ${data.badgeClass}">${data.provider}</span>`;
+
+  // Render banks
+  renderBanks(data.list);
+
+  // Back btn: return to regions
+  document.querySelector('#bank-connect .bc-header .back-btn').onclick = () => {
+    bl.style.display = 'none';
+    document.getElementById('bc-regions').style.display = '';
+    document.getElementById('bc-title').textContent = 'Select Your Region';
+    document.getElementById('bc-subtitle').textContent = 'Your credentials never leave your bank';
+    document.querySelector('#bank-connect .bc-header .back-btn').onclick = () => showScreen('connect');
+  };
+}
+
+function renderBanks(banks){
+  document.getElementById('bank-list-items').innerHTML = banks.map(b => `
+    <div class="bank-item" onclick="openOAuth('${b.id}')" data-testid="bank-${b.id}">
+      <div class="bank-logo" style="font-size:22px;background:${b.color}22;border-color:${b.color}44">${b.emoji}</div>
+      <div>
+        <div class="bank-name">${b.name}</div>
+        <div class="bank-country">${b.country}</div>
+      </div>
+      <svg class="bank-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>
+  `).join('');
+}
+
+function filterBanks(q){
+  const filtered = q
+    ? allBanksForRegion.filter(b => b.name.toLowerCase().includes(q.toLowerCase()) || b.country.toLowerCase().includes(q.toLowerCase()))
+    : allBanksForRegion;
+  renderBanks(filtered);
+}
+
+function openOAuth(bankId){
+  currentBankId = bankId;
+  const bank = allBanksForRegion.find(b => b.id === bankId);
+  if(!bank) return;
+  document.getElementById('oauth-bank-logo').textContent = bank.emoji;
+  document.getElementById('oauth-bank-logo').style.background = bank.color + '22';
+  document.getElementById('oauth-bank-name').textContent = bank.name;
+  document.getElementById('oauth-screen').classList.add('open');
+}
+
+function closeOAuth(){
+  document.getElementById('oauth-screen').classList.remove('open');
+}
+
+function authorizeOAuth(){
+  closeOAuth();
+  const bank = allBanksForRegion.find(b => b.id === currentBankId);
+  if(!bank) return;
+
+  // Show connecting overlay with step animation
+  const overlay = document.getElementById('connecting-overlay');
+  overlay.classList.add('open');
+  document.getElementById('connecting-bank-name').textContent = 'Connecting to ' + bank.name + '…';
+
+  const steps = ['cs1','cs2','cs3','cs4'];
+  steps.forEach(id => document.getElementById(id).classList.remove('done'));
+
+  let si = 0;
+  const stepInterval = setInterval(()=>{
+    if(si < steps.length){
+      document.getElementById(steps[si]).classList.add('done');
+      si++;
+    } else {
+      clearInterval(stepInterval);
+      // Build mock bank transactions and detect subs
+      const bankTxs = generateBankTransactions(bank);
+      const sourceLabel = bank.name + ' (Bank)';
+      const detected = detectSubscriptionsFromTransactions(bankTxs, sourceLabel);
+      if(detected.length > 0){
+        SUBS.length = 0;
+        detected.forEach((s,i)=>{ s.id='s'+i; SUBS.push(s); });
+      }
+      currentImportLabel = bank.name.toUpperCase();
+      setTimeout(()=>{
+        overlay.classList.remove('open');
+        startScanWithMode('bank', bankTxs.length);
+      }, 600);
+    }
+  }, 900);
+}
+
+// Generate realistic mock bank transactions
+function generateBankTransactions(bank){
+  const isUS   = currentRegion === 'us';
+  const isTR   = currentRegion === 'tr';
+  const isEU   = currentRegion === 'eu';
+  const isMENA = currentRegion === 'mena';
+
+  const base = [
+    {date:'2024-01-05', description:'NETFLIX.COM', amount:15.99},
+    {date:'2024-01-08', description:'SPOTIFY USA INC', amount:9.99},
+    {date:'2024-01-10', description:'ADOBE SYSTEMS INC', amount:54.99},
+    {date:'2024-01-12', description:'OPENAI CHATGPT PLUS', amount:20.00},
+    {date:'2024-02-05', description:'NETFLIX.COM', amount:15.99},
+    {date:'2024-02-08', description:'SPOTIFY USA INC', amount:9.99},
+    {date:'2024-01-15', description:'GITHUB PRO', amount:4.00},
+    {date:'2024-01-18', description:'NOTION SO', amount:8.00},
+  ];
+  const usExtra = [
+    {date:'2024-01-20', description:'HULU HULU.COM', amount:17.99},
+    {date:'2024-02-20', description:'HULU HULU.COM', amount:17.99},
+    {date:'2024-01-22', description:'AMAZON PRIME', amount:14.99},
+    {date:'2024-01-25', description:'APPLE.COM/BILL ICLOUD+', amount:2.99},
+  ];
+  const trExtra = [
+    {date:'2024-01-20', description:'AMAZON PRIME', amount:14.99},
+    {date:'2024-01-14', description:'MICROSOFT 365', amount:9.99},
+    {date:'2024-02-14', description:'MICROSOFT 365', amount:9.99},
+    {date:'2024-01-16', description:'CANVA PTY LTD', amount:12.99},
+  ];
+  const euExtra = [
+    {date:'2024-01-11', description:'DROPBOX INC', amount:9.99},
+    {date:'2024-02-11', description:'DROPBOX INC', amount:9.99},
+    {date:'2024-01-21', description:'ZOOM VIDEO COMM', amount:14.99},
+    {date:'2024-01-23', description:'FIGMA INC', amount:12.00},
+  ];
+  const menaExtra = [
+    {date:'2024-01-19', description:'AMAZON PRIME', amount:4.99},
+    {date:'2024-01-24', description:'SHAHID VIP', amount:4.99},
+    {date:'2024-02-24', description:'SHAHID VIP', amount:4.99},
+  ];
+  const extras = isUS?usExtra : isTR?trExtra : isEU?euExtra : menaExtra;
+  return [...base, ...extras];
 }
 
 // ── Settings ───────────────────────────────────────────────────────────────

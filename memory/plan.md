@@ -117,24 +117,48 @@ price: $9.99 USD
 
 ### Plaid Implementation
 - Plaid Link SDK via WebView (already stubbed in codebase)
-- OAuth flow: user authenticates at their bank
-- Credentials NEVER touch SubScrub servers
-- Endpoint: `/transactions/get` → last 12 months
-- Broker service at `infra/plaid-broker/` already scaffolded
-- Credentials needed: `PLAID_CLIENT_ID`, `PLAID_SECRET`
-- Cost: Free up to 100 items, then ~$0.30/item/month
+- **Native SDK**: `react-native-plaid-link-sdk` v12.x (Expo Config Plugin required)
+  ```bash
+  yarn add react-native-plaid-link-sdk
+  # Add to app.json plugins: ["react-native-plaid-link-sdk"]
+  ```
+- Backend endpoint required (Plaid Link Token creation):
+  ```python
+  POST /api/plaid/link-token  → creates link_token via Plaid API
+  POST /api/plaid/exchange    → exchanges public_token for access_token
+  GET  /api/plaid/transactions → fetches last 12 months via access_token
+  ```
+- OAuth flow: PlaidLink component → user authenticates → `onSuccess(publicToken)` → backend exchange
+- Credentials needed: `PLAID_CLIENT_ID`, `PLAID_SECRET` (from dashboard.plaid.com)
+- Cost: Free sandbox, Free up to 100 items production, then ~$0.30/item/month
+- **Web simulator**: Fully functional mock OAuth flow implemented ✅
 
 ### BDDK / Turkey Implementation
-- FinanceAPI.io aggregates all Turkish banks
-- Supports: Garanti, İşbank, Akbank, Yapı Kredi, Ziraat, Halkbank, Vakıfbank
-- OAuth2 flow similar to Plaid
-- Credentials needed: `FINANCEAPI_CLIENT_ID`, `FINANCEAPI_SECRET`
+- **Native SDK**: No official SDK — direct HTTP to TR-API standard
+- All major Turkish banks implement TR-API (BDDK mandate since 2021)
+- **Aggregator recommended**: FinanceAPI.io — single SDK for all Turkish banks
+  ```bash
+  # HTTP-based, no npm package needed
+  # Base URL: https://api.financeapi.io/v1/
+  ```
+- OAuth2 PKCE flow: open bank's auth URL → user consents → redirect with auth_code → exchange for token
+- Supported: Garanti BBVA, İş Bankası, Akbank, Yapı Kredi, Ziraat, Halkbank, VakıfBank, QNB, Denizbank, Enpara
+- Credentials needed: `FINANCEAPI_CLIENT_ID`, `FINANCEAPI_SECRET` (from financeapi.io)
+- **Web simulator**: Fully functional mock OAuth flow with 10 Turkish banks ✅
 
 ### TrueLayer Implementation
-- TrueLayer Connect (React Native SDK)
-- Covers: UK, IE, ES, FR, DE, IT, NL, PL, LT + more
-- OAuth2 + Open Banking / PSD2
-- Credentials needed: `TRUELAYER_CLIENT_ID`, `TRUELAYER_SECRET`
+- **Native SDK**: `rn-truelayer-payments-sdk` v3.1.2 (for payments) + TrueLayer Data API (for transactions)
+  ```bash
+  yarn add rn-truelayer-payments-sdk
+  ```
+- For transaction data: TrueLayer Data API (REST, no React Native SDK needed)
+  ```
+  POST https://auth.truelayer.com/connect/token → get access_token
+  GET  https://api.truelayer.com/data/v1/accounts/{id}/transactions
+  ```
+- Covers 31 EU/UK countries, 2300+ banks (PSD2 mandate)
+- Credentials needed: `TRUELAYER_CLIENT_ID`, `TRUELAYER_CLIENT_SECRET` (from console.truelayer.com)
+- **Web simulator**: Fully functional mock OAuth flow with 10 EU/UK banks ✅
 
 ---
 
@@ -273,9 +297,10 @@ function getBankingConnector(country: string): BankingConnector {
 | 0 | Web simulator | ✅ DONE | Premium design, English |
 | 1 | CSV Upload | ✅ DONE | Web simulator fully functional |
 | 2 | IAP Paywall | ✅ DONE | Web simulator — mock purchase, localStorage persistence |
-| 3a | Plaid (US) | ⬜ PENDING | |
-| 3b | BDDK (Turkey) | ⬜ PENDING | |
-| 3c | TrueLayer (EU) | ⬜ PENDING | |
+| 3a | Plaid (US) | ✅ DONE | Web simulator OAuth flow + Plaid SDK notes in plan |
+| 3b | BDDK (Turkey) | ✅ DONE | Web simulator — Garanti, İşbank, Akbank, YKB, Ziraat + 5 more |
+| 3c | TrueLayer (EU) | ✅ DONE | Web simulator — Revolut, Monzo, N26, HSBC, Barclays + 5 more |
+| 3d | Lean (MENA) | ✅ DONE | Web simulator — Emirates NBD, Al Rajhi, CIB + 6 more |
 | 4 | AI Analysis | ⬜ PENDING | |
 | 5 | Lean Tech (MENA) | ⬜ PENDING | |
 | 6 | Salt Edge (Global) | ⬜ PENDING | |
