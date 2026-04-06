@@ -427,6 +427,68 @@ body {
 .sub-amount.red { color: var(--red); }
 .sub-conf { font-size: 10px; color: var(--text3); margin-top: 2px; }
 
+/* ── View All Row ────────────────────────────────────────────────────────── */
+.view-all-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px 20px;
+}
+.section-hdr-inline { font-size: 10px; letter-spacing: 3px; color: var(--text3); font-weight: 700; }
+.view-all-btn {
+  font-size: 11px; font-weight: 700; color: var(--green);
+  background: var(--green-dim); border: 1px solid rgba(57,255,20,0.25);
+  padding: 5px 12px; border-radius: 100px; cursor: pointer;
+  letter-spacing: 0.5px; transition: all 0.2s;
+}
+.view-all-btn:hover { background: rgba(57,255,20,0.2); }
+
+/* ── Subscriptions Screen ────────────────────────────────────────────────── */
+.subs-topbar {
+  padding: 56px 24px 0;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-shrink: 0;
+}
+.subs-title { font-family: var(--font-head); font-size: 22px; font-weight: 800; }
+.subs-count-badge {
+  font-size: 11px; font-weight: 700;
+  background: var(--surface2); border: 1px solid var(--border);
+  padding: 4px 10px; border-radius: 100px; color: var(--text2);
+}
+.subs-search-wrap { padding: 16px 24px 8px; flex-shrink: 0; position: relative; }
+.subs-search {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 11px 14px 11px 38px;
+  color: var(--text); font-family: var(--font-body); font-size: 13px;
+  outline: none; transition: border-color 0.2s;
+}
+.subs-search:focus { border-color: rgba(57,255,20,0.35); }
+.subs-search::placeholder { color: var(--text3); }
+.subs-search-icon { position: absolute; left: 38px; top: 50%; transform: translateY(-50%); color: var(--text3); pointer-events: none; }
+.filter-tabs {
+  display: flex; gap: 8px;
+  padding: 4px 24px 14px;
+  flex-shrink: 0;
+}
+.filter-tab {
+  padding: 6px 16px; border-radius: 100px; font-size: 11px; font-weight: 700;
+  letter-spacing: 0.8px; cursor: pointer; border: 1px solid var(--border);
+  background: var(--surface); color: var(--text3); transition: all 0.2s;
+}
+.filter-tab.active-all  { background: rgba(57,255,20,0.12); color: var(--green); border-color: rgba(57,255,20,0.3); }
+.filter-tab.active-leak { background: rgba(255,51,102,0.12); color: var(--red); border-color: rgba(255,51,102,0.3); }
+.filter-tab.active-active { background: rgba(59,130,246,0.12); color: #60A5FA; border-color: rgba(59,130,246,0.3); }
+.subs-sort-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px 10px; flex-shrink: 0;
+}
+.subs-sort-label { font-size: 10px; color: var(--text3); letter-spacing: 1px; font-weight: 700; }
+.subs-sort-val { font-size: 11px; color: var(--text2); }
+.subs-empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 60px 24px; text-align: center; gap: 12px;
+}
+.subs-empty-icon { font-size: 40px; opacity: 0.4; }
+.subs-empty-txt { font-size: 14px; color: var(--text3); }
+
 /* ── DETAIL SCREEN ───────────────────────────────────────────────────────── */
 #detail { background: var(--base); transform: translateX(100%); opacity: 1; }
 #detail.active { transform: translateX(0); opacity: 1; }
@@ -1479,9 +1541,36 @@ body {
         <div class="metric-val" id="m-annual"></div>
       </div>
     </div>
-    <div class="section-hdr">TOP DRAINS</div>
+    <div class="view-all-row">
+      <div class="section-hdr-inline">TOP DRAINS</div>
+      <button class="view-all-btn" onclick="showAllSubs()" data-testid="view-all-btn">VIEW ALL →</button>
+    </div>
     <div class="scroll-area">
       <div class="sub-list" id="dash-sub-list"></div>
+    </div>
+  </div>
+
+  <!-- ── SUBSCRIPTIONS SCREEN ─────────────────────────────────────────────── -->
+  <div id="subs-screen" class="screen" data-testid="subs-screen">
+    <div class="subs-topbar">
+      <div class="subs-title">Subscriptions</div>
+      <div class="subs-count-badge" id="subs-count-badge">0 total</div>
+    </div>
+    <div class="subs-search-wrap">
+      <svg class="subs-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="subs-search" id="subs-search-input" type="text" placeholder="Search subscriptions…" oninput="filterSubsList()" data-testid="subs-search-input"/>
+    </div>
+    <div class="filter-tabs">
+      <button class="filter-tab active-all" id="ftab-all"    onclick="setSubsFilter('all')"    data-testid="filter-all">ALL</button>
+      <button class="filter-tab"            id="ftab-active" onclick="setSubsFilter('active')" data-testid="filter-active">ACTIVE</button>
+      <button class="filter-tab"            id="ftab-leak"   onclick="setSubsFilter('leak')"   data-testid="filter-leak">LEAKS</button>
+    </div>
+    <div class="subs-sort-row">
+      <span class="subs-sort-label">SORTED BY AMOUNT</span>
+      <span class="subs-sort-val" id="subs-filtered-count"></span>
+    </div>
+    <div class="scroll-area">
+      <div class="sub-list" id="subs-full-list"></div>
     </div>
   </div>
 
@@ -2180,7 +2269,8 @@ function buildDashboard(){
     return b.amount - a.amount;
   });
 
-  document.getElementById('dash-sub-list').innerHTML = sorted.map(s => subCard(s)).join('');
+  // Dashboard shows top 4 only — leaks first, then by amount
+  document.getElementById('dash-sub-list').innerHTML = sorted.slice(0, 4).map(s => subCard(s)).join('');
 }
 
 function subCard(s){
@@ -2202,12 +2292,73 @@ function subCard(s){
   </div>`;
 }
 
-// ── All Subs ───────────────────────────────────────────────────────────────
+// ── All Subs Screen ────────────────────────────────────────────────────────
+let currentSubsFilter = 'all';
+
 function showAllSubs(){
-  if(!document.getElementById('m-count').textContent) buildDashboard();
-  showScreen('dashboard');
-  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
+  buildSubsScreen();
+  showScreen('subs-screen');
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
   document.getElementById('nav-subs').classList.add('active');
+}
+
+function buildSubsScreen(){
+  // Reset filter + search
+  document.getElementById('subs-search-input').value = '';
+  setSubsFilter(currentSubsFilter, false);
+}
+
+function setSubsFilter(filter, updateState=true){
+  if(updateState) currentSubsFilter = filter;
+  // Update tab styles
+  document.getElementById('ftab-all').className    = 'filter-tab' + (filter==='all'    ? ' active-all'    : '');
+  document.getElementById('ftab-active').className = 'filter-tab' + (filter==='active' ? ' active-active'  : '');
+  document.getElementById('ftab-leak').className   = 'filter-tab' + (filter==='leak'   ? ' active-leak'   : '');
+  renderSubsList();
+}
+
+function filterSubsList(){
+  renderSubsList();
+}
+
+function renderSubsList(){
+  const q      = (document.getElementById('subs-search-input').value || '').toLowerCase();
+  const filter = currentSubsFilter;
+
+  let list = [...SUBS];
+
+  // Status filter
+  if(filter === 'active') list = list.filter(s => s.status !== 'potential_leak');
+  if(filter === 'leak')   list = list.filter(s => s.status === 'potential_leak');
+
+  // Search
+  if(q) list = list.filter(s =>
+    s.name.toLowerCase().includes(q) ||
+    s.category.toLowerCase().includes(q) ||
+    s.source.toLowerCase().includes(q)
+  );
+
+  // Sort: leaks first, then by amount
+  list.sort((a,b) => {
+    if(a.status==='potential_leak' && b.status!=='potential_leak') return -1;
+    if(b.status==='potential_leak' && a.status!=='potential_leak') return 1;
+    return b.amount - a.amount;
+  });
+
+  // Update counters
+  document.getElementById('subs-count-badge').textContent = SUBS.length + ' total';
+  document.getElementById('subs-filtered-count').textContent = list.length + ' shown';
+
+  if(list.length === 0){
+    document.getElementById('subs-full-list').innerHTML = `
+      <div class="subs-empty">
+        <div class="subs-empty-icon">🔍</div>
+        <div class="subs-empty-txt">No subscriptions match your filter.</div>
+      </div>`;
+    return;
+  }
+
+  document.getElementById('subs-full-list').innerHTML = list.map(s => subCard(s)).join('');
 }
 
 // ── Detail ─────────────────────────────────────────────────────────────────
