@@ -362,7 +362,65 @@ body {
 }
 .sub-list { padding: 0 24px 24px; }
 
-/* ── Subscription Card ───────────────────────────────────────────────────── */
+/* ── Charts ──────────────────────────────────────────────────────────────── */
+.chart-section { padding: 20px 24px 4px; }
+.chart-title-row {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.chart-title { font-size: 10px; letter-spacing: 3px; color: var(--text3); font-weight: 700; }
+.chart-total { font-size: 12px; font-weight: 700; color: var(--text2); }
+.bar-chart-wrap {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px 12px 8px; overflow: hidden;
+}
+.donut-flex {
+  display: flex; align-items: center; gap: 20px;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r); padding: 16px;
+}
+.donut-legend { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.donut-legend-item { display: flex; align-items: center; gap: 8px; }
+.donut-legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.donut-legend-cat { font-size: 11px; color: var(--text2); flex: 1; font-weight: 500; }
+.donut-legend-pct { font-size: 11px; font-weight: 700; color: var(--text); }
+
+/* ── Canceled State ──────────────────────────────────────────────────────── */
+.chip-canceled {
+  background: rgba(82,82,91,0.2); color: #71717A;
+  border: 1px solid rgba(82,82,91,0.3);
+}
+.sub-card.canceled { opacity: 0.5; }
+.sub-card.canceled .sub-name { text-decoration: line-through; color: var(--text3); }
+.sub-card.canceled .sub-amount { color: #52525B !important; }
+.btn-cancel-mark {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 14px 20px; border-radius: var(--r);
+  background: rgba(82,82,91,0.12); border: 1px solid rgba(82,82,91,0.3);
+  color: #A1A1AA; font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; margin-top: 0;
+}
+.btn-cancel-mark:hover { background: rgba(82,82,91,0.22); border-color: rgba(82,82,91,0.5); }
+.btn-restore {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 14px 20px; border-radius: var(--r);
+  background: var(--green-dim); border: 1px solid rgba(57,255,20,0.3);
+  color: var(--green); font-family: var(--font-body); font-size: 14px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s; margin-top: 0;
+}
+.btn-restore:hover { background: rgba(57,255,20,0.2); }
+.canceled-banner {
+  background: rgba(82,82,91,0.12); border: 1px solid rgba(82,82,91,0.25);
+  border-radius: var(--r); padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  font-size: 13px; color: #71717A;
+}
+.canceled-banner-icon {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: rgba(82,82,91,0.2); display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.filter-tab.active-canceled { background: rgba(82,82,91,0.2); color: #A1A1AA; border-color: rgba(82,82,91,0.4); }
 .sub-card {
   display: flex; align-items: center;
   gap: 14px;
@@ -1522,30 +1580,54 @@ body {
       <div class="dash-topbar-title">Dashboard</div>
       <div class="demo-pill">DEMO</div>
     </div>
-    <div class="dash-hero">
-      <div class="hero-label">MONTHLY POTENTIAL WASTE</div>
-      <div class="hero-amount" id="hero-waste"></div>
-      <div class="hero-sub"><span id="hero-count"></span> suspected leaks detected &nbsp;·&nbsp; <span id="hero-annual"></span>/yr</div>
-    </div>
-    <div class="metric-row">
-      <div class="metric-box green-box">
-        <div class="metric-lbl">DETECTED</div>
-        <div class="metric-val green" id="m-count"></div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-lbl">MONTHLY</div>
-        <div class="metric-val" id="m-monthly"></div>
-      </div>
-      <div class="metric-box">
-        <div class="metric-lbl">ANNUAL</div>
-        <div class="metric-val" id="m-annual"></div>
-      </div>
-    </div>
-    <div class="view-all-row">
-      <div class="section-hdr-inline">TOP DRAINS</div>
-      <button class="view-all-btn" onclick="showAllSubs()" data-testid="view-all-btn">VIEW ALL →</button>
-    </div>
     <div class="scroll-area">
+      <div class="dash-hero">
+        <div class="hero-label">MONTHLY POTENTIAL WASTE</div>
+        <div class="hero-amount" id="hero-waste"></div>
+        <div class="hero-sub"><span id="hero-count"></span> suspected leaks detected &nbsp;·&nbsp; <span id="hero-annual"></span>/yr</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-box green-box">
+          <div class="metric-lbl">DETECTED</div>
+          <div class="metric-val green" id="m-count"></div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-lbl">MONTHLY</div>
+          <div class="metric-val" id="m-monthly"></div>
+        </div>
+        <div class="metric-box">
+          <div class="metric-lbl">ANNUAL</div>
+          <div class="metric-val" id="m-annual"></div>
+        </div>
+      </div>
+
+      <!-- 6-Month Bar Chart -->
+      <div class="chart-section">
+        <div class="chart-title-row">
+          <span class="chart-title">6-MONTH TREND</span>
+          <span class="chart-total" id="bar-chart-label"></span>
+        </div>
+        <div class="bar-chart-wrap">
+          <div id="bar-chart-svg"></div>
+        </div>
+      </div>
+
+      <!-- Category Donut Chart -->
+      <div class="chart-section" style="padding-bottom:20px">
+        <div class="chart-title-row">
+          <span class="chart-title">SPENDING BY CATEGORY</span>
+          <span class="chart-total" id="donut-chart-label"></span>
+        </div>
+        <div class="donut-flex">
+          <div id="donut-chart-svg" style="flex-shrink:0"></div>
+          <div class="donut-legend" id="donut-chart-legend"></div>
+        </div>
+      </div>
+
+      <div class="view-all-row">
+        <div class="section-hdr-inline">TOP DRAINS</div>
+        <button class="view-all-btn" onclick="showAllSubs()" data-testid="view-all-btn">VIEW ALL →</button>
+      </div>
       <div class="sub-list" id="dash-sub-list"></div>
     </div>
   </div>
@@ -1561,9 +1643,10 @@ body {
       <input class="subs-search" id="subs-search-input" type="text" placeholder="Search subscriptions…" oninput="filterSubsList()" data-testid="subs-search-input"/>
     </div>
     <div class="filter-tabs">
-      <button class="filter-tab active-all" id="ftab-all"    onclick="setSubsFilter('all')"    data-testid="filter-all">ALL</button>
-      <button class="filter-tab"            id="ftab-active" onclick="setSubsFilter('active')" data-testid="filter-active">ACTIVE</button>
-      <button class="filter-tab"            id="ftab-leak"   onclick="setSubsFilter('leak')"   data-testid="filter-leak">LEAKS</button>
+      <button class="filter-tab active-all" id="ftab-all"      onclick="setSubsFilter('all')"      data-testid="filter-all">ALL</button>
+      <button class="filter-tab"            id="ftab-active"   onclick="setSubsFilter('active')"   data-testid="filter-active">ACTIVE</button>
+      <button class="filter-tab"            id="ftab-leak"     onclick="setSubsFilter('leak')"     data-testid="filter-leak">LEAKS</button>
+      <button class="filter-tab"            id="ftab-canceled" onclick="setSubsFilter('canceled')" data-testid="filter-canceled">CANCELED</button>
     </div>
     <div class="subs-sort-row">
       <span class="subs-sort-label">SORTED BY AMOUNT</span>
@@ -1900,7 +1983,7 @@ let prevScreen = 'dashboard';
 function fmt(a, c='USD'){
   return new Intl.NumberFormat('en-US', {style:'currency', currency:c, minimumFractionDigits:2}).format(a);
 }
-function monthlyTotal(){ return SUBS.reduce((a,s)=>a+s.amount,0); }
+function monthlyTotal(){ return SUBS.filter(s=>s.status!=='canceled').reduce((a,s)=>a+s.amount,0); }
 function wasteTotal(){ return SUBS.filter(s=>s.status==='potential_leak').reduce((a,s)=>a+s.amount,0); }
 function leakCount(){ return SUBS.filter(s=>s.status==='potential_leak').length; }
 
@@ -2242,7 +2325,7 @@ function buildDashboard(){
   document.getElementById('hero-waste').textContent = fmt(waste);
   document.getElementById('hero-count').textContent = leaks;
   document.getElementById('hero-annual').textContent = fmt(waste*12);
-  document.getElementById('m-count').textContent = SUBS.length;
+  document.getElementById('m-count').textContent = SUBS.filter(s=>s.status!=='canceled').length;
   document.getElementById('m-monthly').textContent = fmt(total);
   document.getElementById('m-annual').textContent = fmt(total*12);
 
@@ -2263,36 +2346,137 @@ function buildDashboard(){
     }
   }
 
-  const sorted = [...SUBS].sort((a,b)=>{
+  // Dashboard shows top 4 only — leaks first, then by amount (exclude canceled)
+  const sortedActive = [...SUBS].filter(s=>s.status!=='canceled').sort((a,b)=>{
     if(a.status==='potential_leak' && b.status!=='potential_leak') return -1;
     if(b.status==='potential_leak' && a.status!=='potential_leak') return 1;
     return b.amount - a.amount;
   });
+  document.getElementById('dash-sub-list').innerHTML = sortedActive.slice(0, 4).map(s => subCard(s)).join('');
 
-  // Dashboard shows top 4 only — leaks first, then by amount
-  document.getElementById('dash-sub-list').innerHTML = sorted.slice(0, 4).map(s => subCard(s)).join('');
+  // Build charts
+  buildBarChart();
+  buildDonutChart();
 }
 
 function subCard(s){
-  const isLeak = s.status === 'potential_leak';
-  return `<div class="sub-card ${isLeak?'leak':''}" onclick="showDetail('${s.id}')" data-testid="sub-card-${s.key}">
-    ${isLeak ? '<div class="leak-border"></div>' : ''}
-    <div class="sub-icon">${ICONS[s.key]||'📦'}</div>
+  const isLeak     = s.status === 'potential_leak';
+  const isCanceled = s.status === 'canceled';
+  const chipClass  = isCanceled ? 'chip-canceled' : isLeak ? 'chip-leak' : 'chip-active';
+  const chipText   = isCanceled ? 'CANCELED' : isLeak ? 'LEAK' : 'ACTIVE';
+  return `<div class="sub-card ${isLeak?'leak':''} ${isCanceled?'canceled':''}" onclick="showDetail('${s.id}')" data-testid="sub-card-${s.key}">
+    ${isLeak && !isCanceled ? '<div class="leak-border"></div>' : ''}
+    <div class="sub-icon" style="${isCanceled?'opacity:0.4':''}"> ${ICONS[s.key]||'📦'}</div>
     <div class="sub-info">
       <div class="sub-name-row">
         <div class="sub-name">${s.name}</div>
-        <div class="status-chip ${isLeak?'chip-leak':'chip-active'}">${isLeak?'LEAK':'ACTIVE'}</div>
+        <div class="status-chip ${chipClass}">${chipText}</div>
       </div>
       <div class="sub-meta">${s.freq.toUpperCase()} · ${s.source.toUpperCase()}</div>
     </div>
     <div class="sub-right">
-      <div class="sub-amount ${isLeak?'red':'green'}">${fmt(s.amount)}</div>
+      <div class="sub-amount ${isCanceled?'':''}${isLeak&&!isCanceled?'red':'green'}">${fmt(s.amount, s.currency||'USD')}</div>
       <div class="sub-conf">${Math.round(s.confidence*100)}% conf.</div>
     </div>
   </div>`;
 }
 
-// ── All Subs Screen ────────────────────────────────────────────────────────
+// ── Charts ─────────────────────────────────────────────────────────────────
+const CAT_COLORS = {
+  Entertainment:'#FF3366', Software:'#3B82F6', AI:'#8B5CF6',
+  Security:'#F59E0B', Storage:'#10B981', Productivity:'#06B6D4',
+  Developer:'#39FF14', Fitness:'#F97316', Design:'#EC4899',
+  Music:'#14B8A6', News:'#84CC16', Communication:'#FB923C',
+  Lifestyle:'#A78BFA', Shopping:'#FB923C', Unknown:'#71717A',
+};
+
+// Seeded pseudo-random for consistent monthly variance
+function seededRand(seed){ let x=Math.sin(seed+1)*10000; return x-Math.floor(x); }
+
+function buildBarChart(){
+  const active = SUBS.filter(s=>s.status!=='canceled');
+  const baseTotal = active.reduce((a,s)=>a+s.amount,0);
+  if(baseTotal===0){ document.getElementById('bar-chart-svg').innerHTML=''; return; }
+
+  const now = new Date();
+  const months = [];
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const lbl = d.toLocaleString('en',{month:'short'});
+    const variance = i===0 ? 1 : 0.82 + seededRand(i*7)*0.3;
+    months.push({lbl, amt: baseTotal * variance});
+  }
+
+  const maxAmt = Math.max(...months.map(m=>m.amt));
+  const W=345, H=130, bW=38, gap=13, padL=8, padB=22, padT=12;
+  const chartH = H - padB - padT;
+
+  const bars = months.map((m,i)=>{
+    const x = padL + i*(bW+gap);
+    const bH = Math.max(6, (m.amt/maxAmt)*chartH);
+    const y  = padT + chartH - bH;
+    const isNow = i===months.length-1;
+    const color = isNow ? '#39FF14' : 'rgba(57,255,20,0.22)';
+    const txtColor = isNow ? '#39FF14' : '#52525B';
+    return `
+      <rect x="${x}" y="${y}" width="${bW}" height="${bH}" rx="7" fill="${color}" ${isNow?'filter="url(#gbar)"':''}/>
+      <text x="${x+bW/2}" y="${H-6}" text-anchor="middle" fill="${txtColor}" font-size="9.5" font-weight="${isNow?'700':'500'}" font-family="Manrope,sans-serif">${m.lbl}</text>
+      <title>${m.lbl}: ${fmt(m.amt)}</title>`;
+  }).join('');
+
+  document.getElementById('bar-chart-label').textContent = fmt(months[5].amt) + '/mo';
+  document.getElementById('bar-chart-svg').innerHTML = `
+    <svg width="100%" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="gbar" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="4" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      ${bars}
+    </svg>`;
+}
+
+function buildDonutChart(){
+  const active = SUBS.filter(s=>s.status!=='canceled');
+  const cats = {};
+  active.forEach(s=>{ cats[s.category]=(cats[s.category]||0)+s.amount; });
+  const total = Object.values(cats).reduce((a,v)=>a+v,0);
+  if(total===0){ document.getElementById('donut-chart-svg').innerHTML=''; return; }
+
+  const entries = Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const R=52, cx=70, cy=70, sw=20;
+  const circ = 2*Math.PI*R;
+
+  let off=0;
+  const segs = entries.map(([cat,amt])=>{
+    const pct=amt/total, dash=pct*circ, color=CAT_COLORS[cat]||'#71717A';
+    const seg=`<circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="${color}" stroke-width="${sw}"
+      stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${-off}"
+      transform="rotate(-90 ${cx} ${cy})" style="transition:stroke-dashoffset 0.6s ease">
+      <title>${cat}: ${Math.round(pct*100)}%</title></circle>`;
+    off+=dash; return {seg,cat,pct,color};
+  }).join('');
+
+  const legend = entries.slice(0,5).map(([cat,amt])=>`
+    <div class="donut-legend-item">
+      <div class="donut-legend-dot" style="background:${CAT_COLORS[cat]||'#71717A'}"></div>
+      <div class="donut-legend-cat">${cat}</div>
+      <div class="donut-legend-pct">${Math.round(amt/total*100)}%</div>
+    </div>`).join('');
+
+  document.getElementById('donut-chart-label').textContent = entries.length + ' categories';
+  document.getElementById('donut-chart-svg').innerHTML = `
+    <svg width="140" height="140" viewBox="0 0 140 140">
+      <circle cx="${cx}" cy="${cy}" r="${R}" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="${sw}"/>
+      ${segs}
+      <text x="${cx}" y="${cy-6}" text-anchor="middle" fill="#fff" font-size="13" font-weight="800" font-family="Outfit,sans-serif">${fmt(total)}</text>
+      <text x="${cx}" y="${cy+10}" text-anchor="middle" fill="#52525B" font-size="9" font-family="Manrope,sans-serif">/month</text>
+    </svg>`;
+  document.getElementById('donut-chart-legend').innerHTML = legend;
+}
+
+// ── All Subs Screen ─────────────────────────────────────────────────────────
 let currentSubsFilter = 'all';
 
 function showAllSubs(){
@@ -2310,10 +2494,10 @@ function buildSubsScreen(){
 
 function setSubsFilter(filter, updateState=true){
   if(updateState) currentSubsFilter = filter;
-  // Update tab styles
-  document.getElementById('ftab-all').className    = 'filter-tab' + (filter==='all'    ? ' active-all'    : '');
-  document.getElementById('ftab-active').className = 'filter-tab' + (filter==='active' ? ' active-active'  : '');
-  document.getElementById('ftab-leak').className   = 'filter-tab' + (filter==='leak'   ? ' active-leak'   : '');
+  document.getElementById('ftab-all').className      = 'filter-tab' + (filter==='all'      ? ' active-all'      : '');
+  document.getElementById('ftab-active').className   = 'filter-tab' + (filter==='active'   ? ' active-active'   : '');
+  document.getElementById('ftab-leak').className     = 'filter-tab' + (filter==='leak'     ? ' active-leak'     : '');
+  document.getElementById('ftab-canceled').className = 'filter-tab' + (filter==='canceled' ? ' active-canceled' : '');
   renderSubsList();
 }
 
@@ -2328,8 +2512,10 @@ function renderSubsList(){
   let list = [...SUBS];
 
   // Status filter
-  if(filter === 'active') list = list.filter(s => s.status !== 'potential_leak');
-  if(filter === 'leak')   list = list.filter(s => s.status === 'potential_leak');
+  if(filter === 'all')      list = list.filter(s => s.status !== 'canceled');
+  if(filter === 'active')   list = list.filter(s => s.status !== 'potential_leak' && s.status !== 'canceled');
+  if(filter === 'leak')     list = list.filter(s => s.status === 'potential_leak');
+  if(filter === 'canceled') list = list.filter(s => s.status === 'canceled');
 
   // Search
   if(q) list = list.filter(s =>
@@ -2345,8 +2531,10 @@ function renderSubsList(){
     return b.amount - a.amount;
   });
 
-  // Update counters
-  document.getElementById('subs-count-badge').textContent = SUBS.length + ' total';
+  const activeCount = SUBS.filter(s=>s.status!=='canceled').length;
+  const canceledCount = SUBS.filter(s=>s.status==='canceled').length;
+  document.getElementById('subs-count-badge').textContent =
+    canceledCount > 0 ? `${activeCount} active · ${canceledCount} canceled` : `${activeCount} total`;
   document.getElementById('subs-filtered-count').textContent = list.length + ' shown';
 
   if(list.length === 0){
@@ -2366,29 +2554,37 @@ function showDetail(id){
   const s = SUBS.find(x=>x.id===id);
   if(!s) return;
   currentDetailId = id;
-  const isLeak = s.status === 'potential_leak';
+  const isLeak     = s.status === 'potential_leak';
+  const isCanceled = s.status === 'canceled';
 
   document.getElementById('detail-name').textContent = s.name;
-  document.getElementById('detail-status').innerHTML = `<div class="status-chip ${isLeak?'chip-leak':'chip-active'}">${isLeak?'POTENTIAL LEAK':'VERIFIED ACTIVE'}</div>`;
+  document.getElementById('detail-status').innerHTML = `<div class="status-chip ${isCanceled?'chip-canceled':isLeak?'chip-leak':'chip-active'}">${isCanceled?'CANCELED':isLeak?'POTENTIAL LEAK':'VERIFIED ACTIVE'}</div>`;
 
   document.getElementById('detail-body').innerHTML = `
-    <div class="cost-card ${isLeak?'red-card':'green-card'}">
+    ${isCanceled ? `
+    <div class="canceled-banner">
+      <div class="canceled-banner-icon">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#71717A" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>Marked as canceled. Excluded from your monthly totals.</div>
+    </div>` : ''}
+    <div class="cost-card ${isCanceled?'':''}${isLeak&&!isCanceled?'red-card':'green-card'}" style="${isCanceled?'opacity:0.5':''}">
       <div class="cost-lbl">${s.freq.toUpperCase()} CHARGE</div>
-      <div class="cost-num ${isLeak?'red':'green'}">${fmt(s.amount, s.currency)}</div>
+      <div class="cost-num ${isLeak&&!isCanceled?'red':'green'}">${fmt(s.amount, s.currency)}</div>
       <div class="cost-annual">${fmt(s.amount*12, s.currency)}/yr · Estimated</div>
     </div>
     <div class="info-table">
       <div class="info-row"><span class="info-key">Category</span><span class="info-val">${s.category}</span></div>
       <div class="info-row"><span class="info-key">Source</span><span class="info-val">${s.source.toUpperCase()}</span></div>
-      <div class="info-row"><span class="info-key">Confidence</span><span class="info-val ${isLeak?'red':'green'}">${Math.round(s.confidence*100)}%</span></div>
+      <div class="info-row"><span class="info-key">Confidence</span><span class="info-val ${isLeak&&!isCanceled?'red':'green'}">${Math.round(s.confidence*100)}%</span></div>
       <div class="info-row"><span class="info-key">Annual Cost</span><span class="info-val">${fmt(s.amount*12, s.currency)}</span></div>
       <div class="info-row"><span class="info-key">Jurisdiction</span><span class="info-val">${currentJurisdiction}</span></div>
     </div>
-    ${s.cancellationLink ? `<button class="btn-primary" onclick="window.open('${s.cancellationLink}','_blank')" data-testid="cancel-link-btn">
+    ${!isCanceled && s.cancellationLink ? `<button class="btn-primary" onclick="window.open('${s.cancellationLink}','_blank')" data-testid="cancel-link-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15,3 21,3 21,9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
       ${s.name} Cancel
     </button>` : ''}
-    ${isPro ? `
+    ${!isCanceled ? (isPro ? `
     <button class="btn-${isLeak?'danger':'secondary'}" onclick="showLetter('${s.id}')" data-testid="generate-letter-btn">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/></svg>
       Generate ${currentJurisdiction} Letter
@@ -2402,14 +2598,59 @@ function showDetail(id){
         <div class="nudge-sub">Unlock with SubScrub Pro — $9.99 once</div>
       </div>
       <svg class="nudge-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>
-    </div>`}
-    ${renderAIButton(s)}
+    </div>`) : ''}
+    ${!isCanceled ? renderAIButton(s) : ''}
+
+    <!-- Cancel / Restore Button -->
+    ${isCanceled ? `
+    <button class="btn-restore" onclick="markCanceled('${s.id}', false)" data-testid="restore-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.99"/></svg>
+      Restore Subscription
+    </button>` : `
+    <button class="btn-cancel-mark" onclick="markCanceled('${s.id}', true)" data-testid="mark-canceled-btn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Mark as Canceled
+    </button>`}
   `;
   showScreen('detail');
 }
 
+function markCanceled(id, cancel){
+  const s = SUBS.find(x=>x.id===id);
+  if(!s) return;
+  s.status = cancel ? 'canceled' : 'active';
+  const canceledIds = SUBS.filter(x=>x.status==='canceled').map(x=>x.id);
+  localStorage.setItem('subscrub_canceled', JSON.stringify(canceledIds));
+  showDetail(id);
+  // Re-render dashboard metrics in background without navigating
+  const total = monthlyTotal();
+  const waste = wasteTotal();
+  const fmt2 = (v) => fmt(v);
+  const heroEl = document.getElementById('hero-waste');
+  if(heroEl){ heroEl.textContent = fmt2(waste); }
+  const cntEl = document.getElementById('m-count');
+  if(cntEl){ cntEl.textContent = SUBS.filter(s=>s.status!=='canceled').length; }
+  const monEl = document.getElementById('m-monthly');
+  if(monEl){ monEl.textContent = fmt2(total); }
+  const annEl = document.getElementById('m-annual');
+  if(annEl){ annEl.textContent = fmt2(total*12); }
+  buildBarChart();
+  buildDonutChart();
+}
+
 // ── IAP / Paywall ─────────────────────────────────────────────────────────
 let isPro = localStorage.getItem('subscrub_pro') === '1';
+
+// Restore canceled state from localStorage
+(function(){
+  try {
+    const ids = JSON.parse(localStorage.getItem('subscrub_canceled') || '[]');
+    ids.forEach(id => {
+      const s = SUBS.find(x=>x.id===id);
+      if(s) s.status = 'canceled';
+    });
+  } catch(e){}
+})();
 let currentImportLabel = 'DEMO'; // Updated per import mode
 
 function openPaywall(){ document.getElementById('paywall-modal').classList.add('open'); }
