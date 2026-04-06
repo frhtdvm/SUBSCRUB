@@ -70,7 +70,7 @@ def status():
             "gmail":      "demo",
             "outlook":    "demo",
             "revenuecat": "demo",
-            "ai_analysis":"gpt-4.1-mini"
+            "ai_analysis":"gpt-5-nano"
         },
         "build": {"typescript":"0 errors","jest_tests":"23/23 pass","expo_doctor":"17/17 pass"}
     }
@@ -91,7 +91,7 @@ async def analyze_transaction(req: TransactionAnalysisRequest):
                 "Your job is to analyze bank transaction descriptions and determine if they are "
                 "recurring subscription charges. Always respond with valid JSON only, no extra text."
             )
-        ).with_model("openai", "gpt-4.1-mini")
+        ).with_model("openai", "gpt-5-nano")
 
         prompt = f"""Analyze this bank transaction and classify it:
 
