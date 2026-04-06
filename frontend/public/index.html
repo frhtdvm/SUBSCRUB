@@ -1912,12 +1912,12 @@ function showScreen(id, savePrev=true){
   el.classList.add('active');
   currentScreen = id;
 
-  const mainScreens = ['dashboard','detail','settings'];
+  const mainScreens = ['dashboard','subs-screen','detail','settings'];
   const nav = document.getElementById('bottom-nav');
   nav.classList.toggle('visible', mainScreens.includes(id));
 
   document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
-  const mapping = {dashboard:'nav-dashboard', detail:'nav-dashboard', settings:'nav-settings'};
+  const mapping = {dashboard:'nav-dashboard', detail:'nav-dashboard', settings:'nav-settings', 'subs-screen':'nav-subs'};
   const nb = document.getElementById(mapping[id]);
   if(nb) nb.classList.add('active');
 }
