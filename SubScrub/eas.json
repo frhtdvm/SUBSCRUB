@@ -1,59 +1,51 @@
 {
-  "cli": {
-    "version": ">= 14.0.0",
-    "requireCommit": false
-  },
-  "build": {
-    "development": {
-      "developmentClient": true,
-      "distribution": "internal",
-      "ios": {
-        "simulator": true
-      },
-      "android": {
-        "buildType": "apk",
-        "gradleCommand": ":app:assembleDebug"
-      },
-      "env": {
-        "EXPO_PUBLIC_APP_ENV": "development"
-      }
-    },
-    "preview": {
-      "distribution": "internal",
-      "ios": {
-        "simulator": false
-      },
-      "android": {
-        "buildType": "apk"
-      },
-      "env": {
-        "EXPO_PUBLIC_APP_ENV": "preview"
-      }
-    },
-    "production": {
-      "autoIncrement": true,
-      "ios": {
-        "enterpriseProvisioning": "universal"
-      },
-      "android": {
-        "buildType": "app-bundle"
-      },
-      "env": {
-        "EXPO_PUBLIC_APP_ENV": "production"
-      }
-    }
-  },
-  "submit": {
-    "production": {
-      "ios": {
-        "appleId": "YOUR_APPLE_ID",
-        "ascAppId": "YOUR_APP_STORE_CONNECT_APP_ID",
-        "appleTeamId": "YOUR_APPLE_TEAM_ID"
-      },
-      "android": {
-        "serviceAccountKeyPath": "./google-play-service-account.json",
-        "track": "internal"
-      }
-    }
-  }
+	"cli": {
+		"version": ">= 18.0.0",
+		"requireCommit": false,
+		"appVersionSource": "remote"
+	},
+	"build": {
+		"development": {
+			"developmentClient": true,
+			"distribution": "internal",
+			"ios": {
+				"simulator": true
+			},
+			"android": {
+				"buildType": "apk",
+				"gradleCommand": ":app:assembleDebug"
+			},
+			"env": {
+				"EXPO_PUBLIC_APP_ENV": "development"
+			}
+		},
+		"preview": {
+			"distribution": "internal",
+			"ios": {
+				"simulator": false
+			},
+			"android": {
+				"buildType": "apk"
+			},
+			"env": {
+				"EXPO_PUBLIC_APP_ENV": "preview"
+			}
+		},
+		"production": {
+			"autoIncrement": true,
+			"android": {
+				"buildType": "app-bundle"
+			},
+			"env": {
+				"EXPO_PUBLIC_APP_ENV": "production"
+			}
+		}
+	},
+	"submit": {
+		"production": {
+			"android": {
+				"track": "internal"
+			}
+		}
+	}
 }

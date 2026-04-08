@@ -9,6 +9,7 @@
 SubScrub detects recurring subscriptions from bank transactions and inbox receipts, calculates your total monthly/yearly waste, and gives you direct cancellation tools — **all locally on your device**. No data ever leaves your phone.
 
 ### Key principles
+
 - **Local-only**: All processing and storage on-device with SQLite (SQLCipher encryption)
 - **Read-only access**: Bank and inbox connections are read-only
 - **No backend**: No custom server receives or stores your data
@@ -23,7 +24,8 @@ SubScrub detects recurring subscriptions from bank transactions and inbox receip
 SubScrub/
 ├── App.tsx                         # Entry point
 ├── global.css                      # NativeWind CSS
-├── app.json                        # Expo config
+├── app.json                        # Base Expo config
+├── app.config.js                   # Dynamic Expo/EAS production config
 ├── babel.config.js                 # Babel + NativeWind + module resolver
 ├── metro.config.js                 # Metro + NativeWind
 ├── tailwind.config.js              # Tailwind theme (hacker-terminal)
@@ -75,18 +77,18 @@ SubScrub/
 
 ## Screens
 
-| Screen | Description |
-|--------|-------------|
-| Splash | Animated logo with glow effect |
-| Onboarding | 4-slide privacy-first walkthrough |
-| ConnectSources | Bank (Plaid), Gmail, Outlook connections |
-| ScanProgress | Real-time scan with animated progress bar |
-| Dashboard | Cost overview, waste metrics, top subscriptions |
-| SubscriptionList | Filterable list with search |
-| SubscriptionDetail | Full detail with cancellation tools (premium gated) |
-| Paywall | One-time $19.99 lifetime unlock |
-| LegalTemplatePreview | GDPR/KVKK/Generic letter generator |
-| Settings | Privacy controls, jurisdiction, data deletion |
+| Screen               | Description                                         |
+| -------------------- | --------------------------------------------------- |
+| Splash               | Animated logo with glow effect                      |
+| Onboarding           | 4-slide privacy-first walkthrough                   |
+| ConnectSources       | Bank (Plaid), Gmail, Outlook connections            |
+| ScanProgress         | Real-time scan with animated progress bar           |
+| Dashboard            | Cost overview, waste metrics, top subscriptions     |
+| SubscriptionList     | Filterable list with search                         |
+| SubscriptionDetail   | Full detail with cancellation tools (premium gated) |
+| Paywall              | One-time $19.99 lifetime unlock                     |
+| LegalTemplatePreview | GDPR/KVKK/Generic letter generator                  |
+| Settings             | Privacy controls, jurisdiction, data deletion       |
 
 ---
 
@@ -110,6 +112,7 @@ The detection engine runs 100% locally:
 ## Demo Mode
 
 When no credentials are configured, the app automatically runs in Demo Mode:
+
 - 50+ realistic demo transactions (Netflix, Spotify, Adobe CC, etc.)
 - 30 demo email artifacts for cross-source corroboration
 - Full detection engine runs on demo data
@@ -125,34 +128,43 @@ When no credentials are configured, the app automatically runs in Demo Mode:
 ```bash
 cd SubScrub
 cp .env.example .env
-# Fill in credentials:
-# EXPO_PUBLIC_PLAID_BROKER_BASE_URL=https://your-broker.domain.com
-# EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS=...
-# EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID=...
-# EXPO_PUBLIC_MICROSOFT_CLIENT_ID=...
-# EXPO_PUBLIC_REVENUECAT_API_KEY=...
 
 npm install
 npx expo start
 ```
+
+Set these values in `.env` or EAS project secrets:
+
+- `EXPO_OWNER=livadev`
+- `EAS_PROJECT_ID=614e9950-dfbb-4feb-94fd-a20b87984188`
+- `EXPO_PUBLIC_PLAID_BROKER_BASE_URL=https://your-broker.domain.com`
+- `EXPO_PUBLIC_GOOGLE_CLIENT_ID_IOS=...`
+- `EXPO_PUBLIC_GOOGLE_CLIENT_ID_ANDROID=...`
+- `EXPO_PUBLIC_MICROSOFT_CLIENT_ID=...`
+- `EXPO_PUBLIC_REVENUECAT_API_KEY=...`
 
 ### 2. Plaid Broker
 
 ```bash
 cd infra/plaid-broker
 cp .env.example .env
-# Fill in PLAID_CLIENT_ID, PLAID_SECRET, PLAID_ENV
 
 npm install
 npm start
 ```
+
+Set these values before deploy:
+
+- `PLAID_CLIENT_ID=...`
+- `PLAID_SECRET=...`
+- `PLAID_ENV=production`
+- `ALLOWED_ORIGIN=https://your-web-origin.example.com`
 
 ### 3. EAS Build (for SQLCipher + production)
 
 ```bash
 npm install -g eas-cli
 eas login
-eas build:configure
 eas build --platform all --profile production
 ```
 
@@ -162,7 +174,9 @@ eas build --platform all --profile production
 
 ```bash
 cd SubScrub
-npx jest --testPathPattern=src/tests/engine.test.ts --no-coverage
+npm run typecheck
+npm test
+npm run doctor
 ```
 
 ---
@@ -170,6 +184,7 @@ npx jest --testPathPattern=src/tests/engine.test.ts --no-coverage
 ## Cancellation Directory
 
 The directory at `src/data/cancellation-directory.json` contains **506 services** including:
+
 - Streaming/Entertainment: Netflix, Spotify, Disney+, etc.
 - Software/SaaS: Adobe CC, Microsoft 365, GitHub, Figma, etc.
 - Cloud/Developer: AWS, GCP, Azure, Vercel, Cloudflare, etc.
@@ -187,13 +202,13 @@ Each entry includes: provider name, merchant aliases, sender domains, cancellati
 
 SubScrub is designed from first principles for maximum privacy:
 
-| What we do | What we NEVER do |
-|-----------|-----------------|
-| Read-only bank access via Plaid | Store Plaid credentials on-device |
-| Fetch email metadata only (sender, subject, snippet) | Read full email body |
-| Store everything locally in encrypted SQLite | Send data to any remote server |
-| Use SecureStore for OAuth tokens | Log or transmit tokens |
-| Run detection engine on-device | Use third-party analytics |
+| What we do                                           | What we NEVER do                  |
+| ---------------------------------------------------- | --------------------------------- |
+| Read-only bank access via Plaid                      | Store Plaid credentials on-device |
+| Fetch email metadata only (sender, subject, snippet) | Read full email body              |
+| Store everything locally in encrypted SQLite         | Send data to any remote server    |
+| Use SecureStore for OAuth tokens                     | Log or transmit tokens            |
+| Run detection engine on-device                       | Use third-party analytics         |
 
 ---
 

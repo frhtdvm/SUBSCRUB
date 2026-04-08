@@ -1,17 +1,32 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
-import os, json, re, uuid, httpx
+import os, json, re, uuid, httpx, hmac, hashlib
 from datetime import datetime, timedelta
 
 load_dotenv()
+
+
+def env_flag(name: str) -> bool:
+    return os.environ.get(name, "").strip().lower() in {"1", "true", "yes", "on"}
+
+
+def allowed_origins() -> list[str]:
+    raw = os.environ.get("ALLOWED_ORIGINS", "").strip()
+    if raw:
+        return [origin.strip() for origin in raw.split(",") if origin.strip()]
+    app_env = os.environ.get("APP_ENV") or os.environ.get("EXPO_PUBLIC_APP_ENV") or "development"
+    return ["*"] if app_env != "production" else []
+
+
+APP_ENV = os.environ.get("APP_ENV") or os.environ.get("EXPO_PUBLIC_APP_ENV") or "development"
 
 app = FastAPI(title="SubScrub API", version="1.0.0")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins(),
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -44,24 +59,37 @@ LEAN_SANDBOX_URL = "https://sandbox.leantech.me"
 LEAN_PROD_URL    = "https://api.leantech.me"
 
 def lean_base_url():
-    return LEAN_SANDBOX_URL if not os.environ.get("LEAN_PRODUCTION") else LEAN_PROD_URL
+    return LEAN_PROD_URL if env_flag("LEAN_PRODUCTION") else LEAN_SANDBOX_URL
 
 def lean_headers():
     token = os.environ.get("LEAN_APP_TOKEN", "")
     return {"lean-app-token": token, "Content-Type": "application/json"}
 
+
+def verify_lean_signature(raw_body: bytes, signature: str) -> bool:
+    secret = os.environ.get("LEAN_WEBHOOK_SECRET", "").strip()
+    if not secret or not signature:
+        return False
+    normalized = signature.strip()
+    if normalized.startswith("sha256="):
+        normalized = normalized.split("=", 1)[1]
+    expected = hmac.new(secret.encode("utf-8"), raw_body, hashlib.sha256).hexdigest()
+    return hmac.compare_digest(normalized, expected)
+
 # ── Health ─────────────────────────────────────────────────────────────────────
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "app": "SubScrub", "version": "1.0.0"}
+    return {"status": "ok", "app": "SubScrub", "version": "1.0.0", "env": APP_ENV}
 
 @app.get("/api/status")
 def status():
     lean_configured = bool(os.environ.get("LEAN_APP_TOKEN"))
+    ai_configured = bool(os.environ.get("EMERGENT_LLM_KEY"))
     return {
         "app": "SubScrub",
         "description": "Privacy-first subscription sniper",
         "platform": "iOS + Android (Expo React Native)",
+        "environment": APP_ENV,
         "integrations": {
             "plaid":      "pending_credentials",
             "truelayer":  "pending_credentials",
@@ -70,7 +98,7 @@ def status():
             "gmail":      "demo",
             "outlook":    "demo",
             "revenuecat": "demo",
-            "ai_analysis":"gpt-5-nano"
+            "ai_analysis": "configured" if ai_configured else "pending_credentials"
         },
         "build": {"typescript":"0 errors","jest_tests":"23/23 pass","expo_doctor":"17/17 pass"}
     }
@@ -239,12 +267,22 @@ async def lean_get_accounts(entity_id: str = Query(...)):
 
 
 @app.post("/api/lean/webhook")
-async def lean_webhook(payload: dict):
+async def lean_webhook(request: Request):
     """
     Lean webhook receiver.
     Events: entity.created, entity.data.refresh.updated (FINISHED/ERROR)
     In production, verify webhook signature with LEAN_WEBHOOK_SECRET.
     """
+    raw_body = await request.body()
+    signature = (
+        request.headers.get("X-Lean-Signature")
+        or request.headers.get("Lean-Signature")
+        or request.headers.get("X-Signature")
+        or ""
+    )
+    if os.environ.get("LEAN_WEBHOOK_SECRET") and not verify_lean_signature(raw_body, signature):
+        raise HTTPException(status_code=401, detail="Invalid webhook signature")
+    payload = await request.json()
     event = payload.get("type", "")
     # TODO: Store entity_id → customer mapping in DB when entity.created fires
     # TODO: Trigger transaction refresh when entity.data.refresh.updated FINISHED fires

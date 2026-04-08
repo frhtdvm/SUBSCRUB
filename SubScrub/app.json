@@ -3,6 +3,9 @@
     "name": "SubScrub",
     "slug": "subscrub",
     "version": "1.0.0",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
@@ -65,14 +68,7 @@
       "expo-web-browser"
     ],
     "scheme": "subscrub",
-    "extra": {
-      "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID"
-      }
-    },
-    "owner": "YOUR_EXPO_USERNAME",
     "updates": {
-      "url": "https://u.expo.dev/YOUR_EAS_PROJECT_ID",
       "enabled": false,
       "checkAutomatically": "ON_LOAD",
       "fallbackToCacheTimeout": 0

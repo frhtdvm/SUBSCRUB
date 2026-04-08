@@ -1,15 +1,19 @@
 # STATUS
 
 ## Current Goal
+
 Build the full production-ready SubScrub mobile app.
 
 ## Done
+
 - none
 
 ## In Progress
+
 - none
 
 ## Next
+
 - initialize production Expo app structure
 - implement encrypted local data layer
 - implement first-run seed flow
@@ -24,9 +28,11 @@ Build the full production-ready SubScrub mobile app.
 - finalize README and .env.example
 
 ## Blocked
+
 - none
 
 ## Notes
+
 - Missing credentials must not break the app.
 - Demo Mode is fallback only.
 - Build the real production structure.
